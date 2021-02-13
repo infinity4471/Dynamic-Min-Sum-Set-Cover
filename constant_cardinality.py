@@ -1,6 +1,9 @@
+#Constant Cardinality Sets Algorithms
+#O(r^2) approximation where the request sequence R_t has cardinality at most r
+
 import numpy as np
 
-from lp import solve_lp
+from linear_programs import solve_lp
 from beautify import print_matrices, return_matrices
 from mtf_optimal import mtf
 from testing import test

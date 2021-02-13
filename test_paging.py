@@ -2,7 +2,7 @@ import numpy as np
 from datetime import datetime
 from random import randrange, seed
 
-from lp import lp_paging
+from linear_programs import lp_paging
 from fractional_paging import greedy_paging
 
 seed(datetime.now())

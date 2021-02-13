@@ -1,5 +1,6 @@
 # Optimal exact solution for dynamic min sum set cover
 # Runs in exponential time
+
 from copy import copy
 
 def mtf( permutation, element ):
