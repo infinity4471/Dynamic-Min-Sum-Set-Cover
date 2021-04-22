@@ -1,0 +1,40 @@
+\section{Omitted Proofs of Section~\ref{s:main}}\label{s:appendix_first}
+
+\begin{proof}
+Let the equivalent definition of $\mathrm{Set-Cover}$ in which we are given a universe of element $E = \{1,\ldots,n\}$ and sets $S_1,S_2,\ldots,S_m \subseteq E$ and we are asked to select the minimum number of elements covering all the sets (an element $e$ covers set $S_i$ if $e \in S_i$).
+
+Consider the instance of $\DSSC$ with the elements $U= \{1,\ldots,n\} \cup \{d_1,\ldots,d_{n^2m}\}$. The elements $\{d_1,\ldots,d_{n^2m}\}$
+are dummy in the sense that
+they appear in none of the requests $R_t$. Let the initial permutation $\pi_0$ contain in the first $n^2m$ positions the dummy elements and in the last $n$ positions the elements $\{1,\ldots,n\}$, $\pi_0 = [d_1,\ldots,d_{n^2m},1,\ldots,n]$ and the request sequence of 
+$\DSSC$ be $S_1,S_2,\ldots,S_m$.\\
+
+Let a $c$-approximation algorithm for $\DSSC$ producing the permutation $\pi_1,\ldots,\pi_m$ the cost of which is denoted by $\mathrm{Alg}$. Let also $\mathrm{CoverAlg}$ denote the set composed by the element that the $c$-approximation algorithm uses to cover the requests, $\mathrm{CoverAlg} = \{\text{the element of }S_t\text{ appearing first in }\pi_t\}$. Then,
+$$\mathrm{Alg} \geq n^2 m \cdot |\mathrm{CoverAlg}|$$
+
+
+Now consider the following solution 
+for $\DSSC$ constructed by the optimal solution for $\mathrm{Set-Cover}$. This solution initially moves the elements of the optimal covering set
+$\mathrm{OPT}_\mathrm{SetCover}$ to the first positions and then never changes the permutation. Clearly the cost of this solution is upper bounded by
+$$\mathrm{Set-Cover}_{\DSSC} \leq \underbrace{|\mathrm{OPT}_\mathrm{SetCover}| \cdot (n^2m + n)}_{\text{moving cost}} + \underbrace{m\cdot |\mathrm{OPT}_\mathrm{SetCover}|}_{\text{covering cost}}  $$
+\noindent In case $\mathrm{Alg} \leq c \cdot \mathrm{Set-Cover}_{\DSSC}$, we directly get that $|\mathrm{CoverAlg}| \leq 3c \cdot |\mathrm{OPT}_\mathrm{SetCover}|$.\\
+
+\noindent There is no polynomial-time approximation algorithm for $\mathrm{Set}-\mathrm{Cover}$ with approximation ratio better than $\log m$. The latter holds even for instance of $\mathrm{Set}-\mathrm{Cover}$ for which $m = \mathrm{poly}(n)$ \cite{alon2006} where $\mathrm{poly}(\cdot)$ is a polynomial with degree bounded by a universal constant. Since the number of elements $|U|$, in the constructed instance of $\DSSC$ is $n^2m$, any $c\cdot \log |U|$-approximation for $\DSSC$ (for $c$ sufficiently small) implies an approximation algorithm for $\mathrm{Set}-\mathrm{Cover}$
+with approximation ratio less than $\log n$. In case
+there exists an $c=o(r)$-approximation algorithm for $\DSSC$ for requests sequences $R_1,\ldots,R_T$ where $|R_t|\leq r$, we obtain an $o(r)$-approximation for algorithm for $\mathrm{Set-Cover}$ for sets with cardinality bounded by $r$. In the standard form of $\mathrm{Set}-\mathrm{Cover}$ this is translated into the fact that each element belongs in at most $r$ sets.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{l:relax}]
+Let $o_t$ the element of $R_t$ appearing first in the permutation $\pi_{\mathrm{Opt}}^t$. Consider the sequence of permutation $\pi^0,\pi^1,\ldots,\pi^T$ constructed by moving at each round $t$, the element $o_t$ to the first position of the permutation. Notice that $\pi^0,\pi^1,\ldots,\pi^T$ is a feasible solution for both $\mathrm{MoveToFront}$ and $\mathrm{Fractional}-\mathrm{MTF}$. The first key step towards the proof of Lemma~\ref{l:relax} is that
+\[\dkt(\pi^t,\pi^{t-1}) + \dkt(\pi^t,\pi^t_{\mathrm{Opt}}) - 
+\dkt(\pi^{t-1},\pi^{t}_{\mathrm{Opt}}) \leq 2\cdot \pi^t_{\mathrm{Opt}}(R_t)
+\]
+To understand the above inequality, let $k_t$ be the position of $o_t$ in permutation $\pi^{t-1}$. Out of the $k_t - 1$ elements on the right of $o_t$ in permutation $\pi^{t-1}$, let $Left_t$ ($Right_t$) denote the elements that are on the left (right) of $o_t$ in permutation $\pi^{t-1}_{\mathrm{Opt}}$. It is not hard to see that $\pi^t_{\mathrm{Opt}}(R_t) \geq |Left_t|$, $\dkt(\pi^t,\pi^{t-1}) = |Left_t| + |Right_t|$ and  
+$\dkt(\pi^t,\pi^t_{\mathrm{Opt}}) - 
+\dkt(\pi^{t-1},\pi^{t}_{\mathrm{Opt}}) = |Left_t| - |Right_t|$. Using the fact that $\dkt(\pi^{t},\pi^{t}_{\mathrm{Opt}}) - \dkt(\pi^{t-1},\pi^{t}_{\mathrm{Opt}}) \leq \dkt(\pi^{t}_{\mathrm{Opt}},\pi^{t-1}_{\mathrm{Opt}})$ and the previous inequality we get,
+\[\dkt(\pi^t,\pi^{t-1}) + \dkt(\pi^t,\pi^t_{\mathrm{Opt}})-
+\dkt(\pi^{t-1},\pi^{t-1}_{\mathrm{Opt}})
+\leq 
+ 2 \cdot \pi^t_{\mathrm{Opt}}(R_t) + \dkt(\pi^{t}_{\mathrm{Opt}},\pi^{t-1}_{\mathrm{Opt}})
+\]
+\noindent and by a telescopic sum we get $\sum_{t=1}^T \dkt(\pi^t,\pi^{t-1}) \leq 2\cdot \mathrm{OPT}_{\DSSC}$. The proof follows by the fact that $\dfr(\pi^t,\pi^{t-1}) \leq 2\cdot  \dkt(\pi^t,\pi^{t-1})$.
+\end{proof}

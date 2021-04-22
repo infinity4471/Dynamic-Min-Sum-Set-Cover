@@ -1,0 +1,52 @@
+\section{Omitted Proofs of Section~\ref{s:rand}}\label{rand_appendix}
+\begin{proof}[Proof Sketch of Claim~\ref{c:neighboring_sequence}]
+Let $f_{ij}^e$ denotes the optimal solution of the linear program of Definition~\ref{d:distance_lp} defining the FootRule distance $\dfr(A,B)$.  
+In case $A\neq B$, there exist elements $e_1 , e_2$ and indices $i<j$ such that $f_{i\ell(i)}^{e_1} > 0$ and $f_{j\ell(j)}^{e_2} > 0$ with $\ell(i) >= j$ and $\ell(j) <=i$.\\
+
+\noindent Let $\epsilon = \min(f_{i\ell(i)}^{e_1}, f_{j\ell(j)}^{e_2})$ and consider the sequence of the $|i-j|$ matrices produced by moving $\epsilon$ amount of mass in row $e_1$ from column $i$ to column $j$. Then consider the sequence of the $|i-j|$ matrices produced by moving $\epsilon$ amount of mass in the row $e_2$ from column $j$ to column $i$.\\
+
+\noindent In the overall sequence of $2|i-j|$ stochastic matrices, two consecutive matrices are \textit{neighboring}. Furthermore the column-sum of the matrices does not exceed $1 + \epsilon \leq 2$ and the final matrix $A'$ of the sequence is doubly stochastic. Moreover by the fact that $t(i) \geq j$ and $t(j) \leq i$ we get that the overall moving cost of the sequence equals $\dfr(A,A')$ and that 
+$\dfr(A,B) = \dfr(A,A') + \dfr(A',B)$. Applying the same argument inductively, until we reach matrix $B$, proves Claim~\ref{c:neighboring_sequence}.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{l:neigh}]
+Since $A,B$ are neighboring there
+exists exactly two consecutive entries for which $A,B$ differ, denoted as $(e^\ast,i^\ast)$ and $(e^\ast,i^\ast+1)$. Let $\epsilon := A_{e^\ast i^\ast} - B_{e^\ast i^\ast }$, by the  Definition~\ref{d:distance_lp} of FootRule distance, we get that $\dfr(A,B) = |\epsilon|$. Without loss of generality we consider $\epsilon >0$ (the case $\epsilon <0$ symmetrically follows). We also denote with $O_i$ the set of elements $O_i := \{e \neq e^\star \text{ such that } I_e^A = i\}$ and with $I_e^A,I_e^B$ the indices in Step~$6$ of Algorithm~\ref{alg:rand_rounding}.\\
+
+\noindent Since $A,B$ are neighboring, the $e$-th row of $A$ and the $e$-th row of $B$ are identical for all $e \neq e^\star$. As a result, $I_e^A = I_e^B$ for all $e \neq e^\star$. Furthermore the neighboring property implies that
+even for $e^\ast$, $\sum_{s=1}^i A_{e^\star s} = \sum_{s=1}^i B_{e^\star s}$ for all $i \neq i^\star$ and thus $\Pr \left[ I_{e^\star}^A=i \wedge I_{e^\star}^B = j \right] = 0$ for $(i,j) \neq (i^\star,i^\star+1)$. Now notice that
+\begin{align*}
+\Pr\left[ I_{e^\star}^A=i^\star, I_{e^\star}^B = i^\star + 1 \right] &\leq 
+\Pr\left [ \log n \cdot \sum_{s=1}^{i^\star} B_{e^\star s}
+\leq \alpha_e \leq \log n \cdot \sum_{s=1}^{i^\star} A_{e^\star s} \right] \\
+&\leq 
+\log n \cdot \left( A_{e^\star i ^\star} -  B_{e^\star i ^\star}\right)  = \log n \cdot \epsilon
+\end{align*}
+
+\noindent Notice also that in case $I_{e^\star}^A  = I_{e^\star}^B$, $\mathrm{d}_{\mathrm{KT}}(\pi_A,\pi_B) = 0$. This is due to the fact that in such a case $I_e^A = I_e^B$ for all $e \in U$ and the fact that ties are broken lexicographically. As a result,
+\begin{align*}
+ \mathbb{E}\left[\mathrm{d}_{\mathrm{KT}}(\pi_A,\pi_B) \right] &= \Pr\left[ I_{e^\star}^A \neq I_{e^\star}^B\right] \cdot \mathbb{E}\left[\mathrm{d}_{\mathrm{KT}}(\pi_A,\pi_B)|~ I_{e^\star}^A \neq I_{e^\star}^B\right]\\
+&=\Pr[ I_{e^\star}^A=i^\star, I_{e^\star}^B = i^\star + 1 ] \cdot \mathbb{E}\left[\mathrm{d}_{\mathrm{KT}}(\pi_A,\pi_B)|~ I_{e^\star}^A=i^\star, I_{e^\star}^B =i^\star + 1\right]\\ 
+&\leq \epsilon \log n \cdot \left( \mathbb{E}\left[|O_{i^\star}|\right] + \mathbb{E}\left[|O_{i^\star + 1}|\right] \right)
+\end{align*}
+where the last inequality follows by the fact that once $I_{e^\ast}^A = i^\ast$ and $I_{e^\ast}^B = i^\ast + 1$, the element $e^\ast$ can move at most by $|O_{i^\ast}| + |O_{i^\ast+1}|$ positions and the fact that $I_{e^\ast}^A,I_{e^\ast}^B$ and $|O_{i^\ast}|,|O_{i^\ast+1}|$ are independent random variables.\\
+
+\noindent We complete the proof we providing a bound on $\mathbb{E}\left[|O_i|\right]$.  Notice that for $e \in U/ \{e^\ast\}$,
+$$ \Pr[ e \in O_{i}] \leq \Pr \left [ \log n \sum_{s=1}^{i-1} A_{es} \leq \alpha_e \leq \log n \sum_{s=1}^{i} A_{es}\right] \leq \log n \cdot A_{ei} $$
+which implies that $\mathbb{E}\left[|O_i|\right] \leq \log n \sum_{e \neq e^\star} A_{ei} \leq 2 \log n$. Finally we overall get,
+$$\mathbb{E}\left[\mathrm{d}_{\mathrm{KT}}(\pi_A,\pi_B) \right] \leq
+4\log^2 n \cdot \dfr(A,B)$$
+\end{proof}
+
+
+
+\begin{proof}[Proof of Lemma~\ref{l:rand_moving_cost}] Given the doubly stochastic matrices $A,B$, let the sequence  
+$A = A^0,A^1,\ldots,A^T = B$ of neighboring stochastic matrices ensured by  Claim~\ref{c:neighboring_sequence}. Now let $\pi^0,\pi^1,\ldots,\pi^T$ the sequence of permutations that the randomized rounding of Algorithm~\ref{alg:rand_rounding} produces given as input the sequence $A = A^0,A^1,\ldots,A^T = B$. Notice that,
+\[\mathbb{E}\left[\mathrm{d}_{\mathrm{KT}}(\pi^A,\pi^B)\right] \leq
+\sum_{t=1}^t \mathbb{E}\left[\mathrm{d}_{\mathrm{KT}}(\pi^t,\pi^{t-1})\right]
+\leq 4\log^2 n \cdot 
+\sum_{t=1}^T\dfr(A^t,A^{t-1})
+=  4\log^2 n \cdot \dfr(A,B)\]
+where the first inequality follows by the triangle inequality, the second by Lemma~\ref{l:neigh}
+and the last equality by Case $4$ of Claim~\ref{c:neighboring_sequence}.
+\end{proof}

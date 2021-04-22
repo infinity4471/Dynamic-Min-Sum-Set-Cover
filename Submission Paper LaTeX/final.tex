@@ -1,0 +1,422 @@
+\documentclass[a4paper,UKenglish,cleveref,autoref, thm-restate]{lipics-v2019}
+\input{headers/misc}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{xcolor}
+%\usepackage{algpseudocode}
+\usepackage{float}
+\usepackage{graphicx}
+
+\def\hf{\selectfont\sffamily\bfseries}
+%\newcommand{\paragr}[1]{\smallskip\noindent{\hf #1}}
+\renewcommand{\paragraph}[1]{\smallskip\noindent{\hf #1}}
+
+\def\DSSC{\mathrm{Dyn}\text{-}\mathrm{MSSC}}
+\def\SSC{\mathrm{MSSC}}
+\def\cR{\mathcal{R}}
+\def\cost{\mathrm{Cost}}
+\def\dkt{\mathrm{d}_{\mathrm{KT}}}
+\def\dfr{\mathrm{d}_{\mathrm{FR}}}
+\begin{document}
+
+\maketitle
+
+\label{sec:typesetting-summary}
+
+\input{headers/abstract}
+\input{introduction}
+
+\section{Preliminaries and Basic Definitions}
+The set of elements $e$ is denoted by $U$ with $|U| = n$. A permutation of the elements is denoted by $\pi$ where $\pi_i$ denotes the element lying at position $i$ (for $1\leq i \leq n$) and $\mathrm{Pos}(e,\pi)$ denotes the position of the element $e \in U$ in permutation $\pi$.
+
+\begin{definition}[Kendall-Tau Distance]\label{d:KT}
+Given the permutations $\pi^A,\pi^B$, a pair of elements $(e,e')$ is inverted if and only if $\mathrm{Pos}(e,\pi^A) > \mathrm{Pos}(e',\pi^A)$ and $\mathrm{Pos}(e,\pi^B) < \mathrm{Pos}(e',\pi^B)$ or vice versa. The Kendall-Tau distance between the permutations $\pi^A,\pi^B$, denoted by $\dkt(\pi^A,\pi^B)$, is the number of inverted pairs.
+\end{definition}
+
+\begin{definition}[Spearman' Footrule Distance]\label{d:KT}
+The FootRule distance between the permutations $\pi^A,\pi^B$ is defined as $\mathrm{d}_{\mathrm{FR}}(\pi^A,\pi^B) = \sum_{e \in U}|\mathrm{Pos}(e,\pi^A) - \mathrm{Pos}(e,\pi^B)|$.
+\end{definition}
+\noindent The Kendall-Tau distance and FootRule distance are approximately equivalent, $\dkt(\pi^A,\pi^B) \leq \mathrm{d}_{\mathrm{FR}}(\pi^A,\pi^B) \leq 2 \cdot \dkt(\pi^A,\pi^B)$. Moreover both of them satisfy the triangle inequality.
+\begin{definition} An $n \times n$ matrix with positive entries (rows stand for the elements and columns for the positions) is called stochastic if $\sum_{i = 1}^n A_{ei} = 1$ for all $e\in U$ and doubly stochastic if (additionally) $\sum_{e \in U} A_{ei}=1$ for all $1\leq i \leq n$.
+\end{definition}
+\noindent A permutation of the elements $\pi$ can be equivalent represented by a $0$-$1$ doubly stochastic matrix $A$, where $A_{ei}=1$ if element $e$ lies at position $i$ and $0$ otherwise. When clear from context, we use the notion of permutation and ($0$-$1$) doubly stochastic matrix interchangeably.
+
+The notion of FootRule distance can be naturally extended to stochastic matrices. Given two doubly stochastic matrices $A,B$ consider the min-cost transportation problem, transforming row $A_e$ to the row $B_e$ where the cost of transporting a unit of mass between column $i$ and column $j$ equals $|i-j|$. Formally for each row $e$, define a complete bipartite graph where on the left part lie the entries $(e,i)$ for $1\leq i \leq n$ and on the right part the entries $(e,j)$ for $1\leq j \leq n$. The mass transported from entry $(e,i)$ to entry $(e,j)$ (denoted as $f_{ij}^e$)
+costs $f_{ij}^e\cdot |i-j|$ and the total mass \textit{leaving} $(e,i)$ equals $A_{ei}$ and the total  mass \textit{arriving} at $(e,j)$ equals $B_{ej}$.
+\begin{definition}\label{d:distance_lp}
+The FootRule distance between two stochastic matrices 
+$A,B$, denoted by $\mathrm{d}_{\mathrm{FR}}(A,B)$, is the optimal value of the following linear program,
+\begin{equation*}
+    \begin{array}{ll@{}ll}
+        \text min & \displaystyle \sum_{e \in U} \sum_{i = 1}^{n} \sum_{j=1}^n |i - j| \cdot f_{ij}^e &\\
+        \text{ s.t } & \displaystyle \sum_{i=1}^{n} f_{ij}^e = B_{ej}~~~~\text{for all }e \in U \text{ and }j=1,\ldots ,n&&\\
+        & \displaystyle \sum_{j=1}^{n} f_{ij}^e = A_{ei}~~~~\text{for all }e \in U \text{ and }i=1,\ldots, n&&\\
+        & \displaystyle f_{ij}^e \geq 0~~~~~~~~~~~\text{for all } e \in U \text{ and }i,j = 1,\ldots, n
+    \end{array}
+\end{equation*}
+\end{definition}
+\begin{example}
+Let the stochastic matrices $A = 
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$, $B = 
+\begin{pmatrix}
+1/3 & 1/3 & 1/3 \\
+1/2 & 1/2 & 0 \\
+1/4 & 0 & 3/4
+\end{pmatrix}$. The FootRule distance $\mathrm{d}_{\mathrm{FR}}(A,B) = \underbrace{(0\cdot 1/3 + 1\cdot 1/3 + 2\cdot 1/3)}_{\text{first row}}$ + $\underbrace{(1\cdot 1/2 + 0\cdot 1/2 + 1\cdot 0)}_{\text{second row}}$
++ $\underbrace{(2\cdot 1/4 + 1\cdot 0 + 0\cdot 3/4)}_{\text{third row}} = 2$.
+\end{example}
+\noindent Up next we present the formal definition of Dynamic Min-Sum Set Cover.
+\begin{definition}[\textbf{Dynamic Min-Sum Set Cover}]
+Given a universe of elements $U$, a sequence of
+requests $R_1,\ldots,R_T \subseteq U$ and an initial permutation of the elements $\pi^0$. 
+The goal is to select a sequence of permutation $\pi^1,\ldots,\pi^T$ that minimizes 
+$$\sum_{t=1}^{T} \pi^t(R_t) + \sum_{t=1}^{T} \dkt ( \pi^t, \pi^{t-1} )$$
+where $\pi^t(R_t)$ is the position of the first element of $R_t$ that we encounter in $\pi^t$, $\pi^t(R_t) = \min \{1\leq i \leq n:~ \pi_i^t \in R_t\}$.
+\end{definition}
+\noindent We refer to $\sum_{t=1}^T\pi^t(R_t)$ as \textbf{covering cost} and to $\sum_{t=1}^T \dkt(\pi^t,\pi^{t-1})$ as \textbf{moving cost}.
+We denote with $\pi_{\mathrm{Opt}}^t$ the permutation of the optimal solution of $\DSSC$ at round $t$, with $o_t$ the element that the optimal solution uses to cover the request $R_t$ (the element of $R_t$ appearing first in $\pi_{\mathrm{Opt}}^t$), and with $\mathrm{OPT}_{\DSSC}$ the cost of the optimal solution. Finally we call an instance of $\DSSC$ \textit{r-bounded} in case the cardinality of the requests is bounded by $r$, $|R_t| \leq r$.
+\section{Approximation Algorithms for Dynamic Min-Sum Set Cover}\label{s:main}
+\noindent There exists an
+approximation-preserving reduction from $\mathrm{Set-Cover}$ to  
+$\DSSC$ that provides us with the following inapproximability results.
+\begin{theorem}\label{t:hardness}
+\begin{itemize}
+    \item There is no $c \cdot \log n$-approximation algorithm for $\DSSC$ (for a sufficienly small constant $c$) unless $\mathrm{P = NP}$.
+    
+    \item For $r$-bounded sequences, there is no $o(r)$-approximation algorithm for $\DSSC$, unless there is a
+    $o(r)$-approximation algorithm for $\mathrm{Set-Cover}$ with each element being covered by at most $r$ sets.
+\end{itemize}
+\end{theorem}
+
+\noindent The proof of Theorem~\ref{t:hardness} is fairly simple, given an instance of $\mathrm{Set-Cover}$ we construct an instance of $\DSSC$ in which the initial permutation $\pi^0$ contains in the first positions some dummy elements (they do not appear in any of the requests) and in the last positions the sets of the $\mathrm{Set-Cover}$ (we consider an element of $\DSSC$ for each set of $\mathrm{Set-Cover}$). Finally each request for $\DSSC$ is associated with an element of the $\mathrm{Set-Cover}$ and contains the \textit{elements in $\DSSC$/ sets in $\mathrm{Set-Cover}$} containing it.
+
+Both the $O(\log^2 n)$-approximation algorithm (for requests of general cardinality) and the $O(r^2 )$-approximation algorithm for $r$-bounded requests, that we subsequently present,
+are based on rounding a linear program called \textit{Fractional Move To Front}. The latter is the linear program relaxation of \textit{Move To Front}, a problem closely related to Dynamic Min-Sum Set Cover.$~\mathrm{MTF}$ asks for a sequence of permutations $\pi^1,\ldots,\pi^T$ such as at each round $t$, an element of $R_t$ lies on the first position of $\pi^t$ and $\sum_{t=1}^T \mathrm{d}_{\mathrm{FR}}(\pi^t,\pi^{t-1})$ is minimized.
+
+\begin{definition}\label{d:frac_MTF}
+Given a sequence of requests $R_1,\ldots,R_T \subseteq U$ and an initial permutation of the elements $\pi^0$, consider the following linear program, called $\mathrm{Fractional- MTF}$,
+\begin{equation*}
+    \begin{array}{ll@{}ll}
+        \text min & \displaystyle \sum_{t=1}^{T} \mathrm{d}_{\mathrm{FR}}(A^t,A^{t-1})&\\
+        \text{ s.t } & \displaystyle \sum_{i=1}^{n} A_{ei}^t = 1 ~~~~\text{for all }e \in U\text{ and } t = 1,\ldots, T &&\\
+        & \displaystyle \sum_{e \in U} A_{ei}^t = 1 ~~~~\text{for all }i = 1,\ldots,n\text{ and } t = 1,\ldots, T&\\
+        & \displaystyle \sum_{e \in R_t} A_{e1}^t = 1 ~~~\text{for all } t = 1,\ldots, T&\\
+        & \displaystyle A^0 = \pi^0 &&\\
+        & \displaystyle A_{ei}^t \geq 0 ~~~~~~~~\text{for all } e \in U, ~i = 1,\ldots, n\text{ and } t = 1,\ldots, T&\\
+    \end{array}
+\end{equation*}
+where $\mathrm{d}_{\mathrm{FR}}(\cdot,\cdot)$ is the FootRule distance of Definition~\ref{d:distance_lp}.
+\end{definition}
+\noindent  There is an elegant argument (appeared in previous works, e.g., \cite{FKKSV20})
+showing that the optimal solution of $\mathrm{MTF}$ is at most $4 \cdot \mathrm{OPT}_{\DSSC}$. In Lemma~\ref{l:relax} we provide the argument
+(see Appendix~\ref{s:appendix_first}) and establish that $\mathrm{Fractional- MoveToFront}$ is a $4$-approximate relaxation of $\DSSC$.
+\begin{lemma}\label{l:relax}
+$\sum_{t=1}^T \mathrm{d}_{\mathrm{FR}}(A^t,A^{t-1}) \leq 4 \cdot \mathrm{OPT}_{\DSSC}$
+where $A^1,\ldots,A^t$ is the optimal solution of $\mathrm{Fractional- MTF}$.
+\end{lemma}
+As already mentioned, our main technical contribution is the design of \textit{rounding schemes} converting the optimal solution, $A^1,\ldots,A^T$, of $\mathrm{Fractional- MTF}$ into a sequence of permutations $\pi^1,\ldots,\pi^T$. This is done so as to bound the moving cost of our algorithms by the moving cost $\sum_{t=1}^T \dfr(A^t,A^{t-1})$. We then separately bound the covering cost, $\sum_{t=1}^T \pi^t(R_t)$ by showing that always an element of $R_t$ lies on the first positions of $\pi^t$.
+
+The main technical challenge in the design of our rounding schemes is ensure to that the moving cost of our solutions $\sum_{t=1}^T\dkt(\pi^t,\pi^{t-1})$ is approximately bounded by the moving cost $\sum_{t=1}^T\dfr(A^t,A^{t-1})$. Despite the fact that the connection between 
+doubly stochastic matrices and permutations is quite well-studied
+and there are various rounding schemes converting doubly stochastic matrices to probability distributions on permutations (such as the Birkhoff–von Neumann decomposition or the schemes of \cite{BGK10,SW11,BBFT20,FKKSV20}), using such schemes in a \textit{black-box} manner does not provide any kind of positive results for $\DSSC$. For example consider the case where $A^1 = \dots = A^T$ and thus $\sum_{t=1}^T \dfr(A^t,A^{t-1}) = \dfr(A^1,A^0)$. In case a randomized rounding scheme is applied \textit{independently to each $A^t$}, there always exists a positive probability that $\pi^t \neq \pi^{t-1}$ and thus the moving cost will far exceed $\dfr(A^1,A^0)$ as $T$ grows. The latter reveals the need for \textit{coupled rounding schemes} that convert the overall sequence of matrices $A^1,\ldots,A^T$ to a sequence of permutations $\pi^1,\ldots,\pi^T$. Such a rounding scheme is presented in Algorithm~\ref{alg:rand_rounding} and constitutes the back-bone of our approximation algorithm for requests of general cardinality.
+
+\begin{algorithm}[h]
+  \caption{A Randomized Algorithm for $\DSSC$}\label{alg:rand_rounding}
+  \textbf{Input:} A sequence of requests $R_1,\ldots,R_T$ and an initial permutation of the elmenents $\pi^0$.\\
+  \textbf{Output:} A sequence of permutations $\pi^1,\ldots,\pi^T$.
+
+ \begin{algorithmic}[1]
+ \STATE Find the optimal solution $A^0=\pi^0,A^1,\ldots,A^T$ for $\mathrm{Fractional-MTF}$. 
+
+     \FOR {each element $e \in U$}
+        \STATE Select $\alpha_e$ uniformly at random in $[0,1]$.
+        \ENDFOR
+
+ \FOR {$t=1 \ldots T$ }
+              
+     \FOR {all elements $e \in U$}
+                \STATE $I_e^t := \mathrm{argmin}_{1\leq i \leq n} \{ \log n \cdot \sum_{s=1}^i 
+                A_{es}^t \geq \alpha_e\}$.
+        \ENDFOR
+            
+            \STATE $\pi^t:=$ sort elements according to $I_e^t$ with ties being broken lexicographically.
+\ENDFOR
+  \end{algorithmic}
+\end{algorithm}
+The rounding scheme described in Algorithm~\ref{alg:rand_rounding}, imposes correlation between the different time-steps by simply requiring that each element $e$ selects $\alpha_e$ once and for all and by breaking ties lexicographically (any consistent tie-breaking rule would also work). In Lemma~\ref{l:rand_moving_cost} of Section~\ref{s:rand}, we show that no matter the sequence of doubly stochastic matrices, the rounding scheme of Algorithm~\ref{alg:rand_rounding} produces a sequence of permutations with overall moving cost at most $4\log^2 n$ the moving cost of the matrix-sequence\footnote{By omitting 
+the $\log n$-multiplication step of Step~$7$, one could establish that the moving cost of the produced permutations is at most $4$ times the moving cost of the matrix-sequence, however omitting the $\log n$ multiplication could lead in prohibitively high covering cost.} and thus establishes that the overall moving cost of Algorithm~\ref{alg:rand_rounding} is bounded by $4\log^2 n \cdot \mathrm{OPT}_{\DSSC}$. The $\log n$ multiplication in Step~$7$ serves as a \textit{probability amplifier} ensuring that at least one element of $R_t$ lies in the relatively first positions of $\pi^t$ and permits us to approximately bound the covering cost $\sum_{t=1}^T \mathbb{E}\left[\pi^t(R_t) \right]$ by the covering cost of the optimal solution for $\DSSC$,
+$\sum_{t=1}^T \pi_\mathrm{Opt}^t(R_t)$.
+\begin{theorem}\label{t:rand}
+Algorithm~\ref{alg:rand_rounding} is a $O(\log^2 n)$-approximation algorithm for $\DSSC$.
+\end{theorem}
+
+\noindent Despite the fact that in Step~$7$ of Algorithm~\ref{alg:rand_rounding}, we multiply the entries of $A^t$ with $\log n$ the overall guarantee is $O(\log^2 n)$. At a first glance the latter seems quite strange but admits a rather natural explanation. For most of the positions $i$, the probability that an element $e$ admits index $I_e^t = i$ is roughly $\log n \cdot A_{ei}^t$, but due to the fact each index $j \leq i$ is on expectation  selected by $\log n$ other elements, the expected position of $e$ in the produced permutation is roughly $ \log^2 n$ times the expected value of
+$\mathrm{argmin}_{1\leq i \leq n} \{ \sum_{s=1}^i A_{es}^t \geq \alpha_e\}$. This phenomenon relates with the elegant fitting argument given in \cite{FLT04} to prove that the greedy algorithm is $4$-approximation for the original \textit{Min-Sum Set Cover} (which is tight unless $\mathrm{P}= \mathrm{NP}$). %In order to prove that the greedy algorithm is $4$-approximation (which is also tight assuming unless $\mathrm{P}= \mathrm{NP}$). Feige et. al shrink by a factor $1/2$ both the covering indices of the requests and the amount of mass that an element needs to be covered. 
+The latter makes us conjecture that the tight inapproximability bound for $\DSSC$ is $\Omega(\log^2 n)$ for requests of general cardinality. 
+
+Motivated by the $r$-approximation LP-based algorithm for instances of 
+$\mathrm{Set-Cover}$ in which elements belong in at most $r$ sets, we examine whether the $O(\log^2 n)$ for $\DSSC$
+can be ameliorated in case of $r$-bounded request sequences. Interestingly, the simple \textit{greedy rounding} scheme (described\footnote{Step~$3$ of Algorithm~\ref{alg:greedy_rounding} is well-defined since $|R_t| \leq r$ and $\sum_{e \in R_t}A_{e1}^t = 1$.} in Algorithm~\ref{alg:greedy_rounding}) provides such a $O(r^2)$-approximation algorithm.
+\begin{algorithm}[H]
+  \caption{A Greedy-Rounding Algorithm for $\DSSC$ for $r$-Bounded Sequences.}\label{alg:greedy_rounding}
+  \textbf{Input:} A request sequence $R_1,\ldots,R_T$ with $|R_t| \leq r$ and an initial permutation $\pi^0$.\\
+  \textbf{Output:} A sequence of permutations $\pi^1,\ldots,\pi^T$.
+
+ \begin{algorithmic}[1]
+ \STATE Find the optimal solution $A^0=\pi^0,A^1,\ldots,A^T$ for $\mathrm{Fractional-MTF}$. 
+
+ 
+ \FOR {$t=1 \ldots T$ }
+              
+        \STATE $\pi^t:=$ in $\pi^{t-1}$, move to the first position an element $e \in R_t$
+        such that $A_{e1}^t \geq 1/r$
+\ENDFOR
+  \end{algorithmic}
+\end{algorithm}
+
+\noindent The $O(r^2)$-approximation guarantee of Algorithm~\ref{alg:greedy_moving} is formally stated and proven in Theorem~\ref{t:greedy}. The main technical challenge is that we cannot directly compare the moving cost of Algorithm~\ref{alg:greedy_rounding} with $\sum_{t=1}^T \dfr(A^t,A^{t-1})$ and thus we deploy a two-step detour.
+
+In the first step (Lemma~\ref{l:upper_bound_r}), we prove the existence of a 
+sequence of doubly stochastic matrices $\hat{A}^0 =\pi^0,\hat{A}^1,\ldots,\hat{A}^T$ for which each $\hat{A}^t$ satisfies that $\textbf{(i)}$ its entries of  are \textbf{multiples of $1/r$}, $\textbf{(ii)}$ $\hat{A}^t_{e_t 1} \geq 1/r$ where $e_t$ is the element that Algorithm~\ref{alg:greedy_rounding} moves to the first position at round $t$, and $\textbf{(iii)}$ the sequence
+$\hat{A}^0 =\pi^0,\hat{A}^1,\ldots,\hat{A}^T$ admits moving cost at most 
+$\sum_{t=1}^T \mathrm{d}_{\mathrm{FR}}(A^t,A^{t-1})$. In order to establish the existence of such a sequence, we construct an appropriate linear program (see Definition~\ref{def:lp_2}) based on the elements 
+that Algorithm~\ref{alg:greedy_rounding} moves to the first position at each round and prove that it admits an optimal solution with values being multiples of $1/r$. To do the latter, we
+relate the linear program of Definition~\ref{def:lp_2} with a fractional version of the $k$-$\mathrm{Paging}$ \cite{BBN12} problem and based on the optimal eviction policy
+(\textit{evict the page appearing the furthest in the future}), we design an algorithm producing optimal solutions for the LP with values being multiple of $1/r$.
+
+In the second step (Lemma~\ref{l:r_integral}), we show that for any sequence $\hat{A}^0 =\pi^0,\hat{A}^1,\ldots,\hat{A}^T$ satisfying properties~\textbf{(i)} and~\textbf{(ii)}, the moving cost of Algorithm~\ref{alg:greedy_rounding} is at most $O(r^2) \cdot \sum_{t=1}^T \dfr(\hat{A}^t,\hat{A}^{t-1})$. The latter is achieved through the use of an appropriate \textit{potential function} based on a generalization of Kendall-Tau distance to  
+doubly stochastic matrices with entries being multiples
+of $1/r$ (see Definition~\ref{d:frac_KT}).
+\begin{theorem}\label{t:greedy}
+Algorithm~\ref{alg:greedy_rounding}
+is a $O(r^2)$-approximation algorithm for $\DSSC$.
+\end{theorem}
+\noindent In Section~\ref{s:rand}~and~\ref{s:greedy} we provide the basic steps and ideas in the proof of Theorem~\ref{t:rand}~and~\ref{t:greedy} respectively.
+
+\section{Proof of Theorem~\ref{t:rand}}\label{s:rand}
+The basic step towards the proof of Theorem~\ref{t:rand} is Lemma~\ref{l:rand_moving_cost}, establishing the fact that once two doubly stochastic matrices are given as input to the randomized rounding of Algorithm~\ref{alg:rand_rounding}, the expected distance of the produced permutations is approximately bounded by the distance of the respective doubly stochastic matrices.
+\begin{lemma}\label{l:rand_moving_cost}
+Let the doubly stochastic matrices $A,B$ given as input to the
+rounding scheme of
+Algorithm~\ref{alg:rand_rounding}. Then for the produced permutations
+$\pi^A,\pi^B$, 
+$
+\mathbb{E}\left[ \dkt(\pi^A,\pi^B) \right] \leq 4\log^2 n \cdot \dfr(A,B)$.
+\end{lemma}
+
+\noindent Before exhibiting the proof of Lemma~\ref{l:rand_moving_cost} we introduce the notion of \textit{neighboring matrices}.
+\begin{definition}(Neighboring stochastic matrices)
+The stochastic matrices $A,B$ are neighboring if and only if they differ in exactly two entries lying on the same row and on consecutive columns.
+\end{definition}
+\begin{example}
+Let $A = 
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$, $B = 
+\begin{pmatrix}
+1/2 & 1/2 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$ and $C = 
+\begin{pmatrix}
+1 & 0 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$. The pair of matrices
+$(A,B)$ and $(A,C)$ are neighboring while $(B,C)$ are not.
+\end{example}
+
+\noindent Any doubly stochastic matrix $A$ can be converted to another doubly stochastic matrix $B$ through an intermediate sequence of neighboring stochastic matrices all of which are \textit{almost doubly stochastic}
+and their overall moving cost equals $\mathrm{d}_{\mathrm{FR}}(A,B)$.
+\begin{claim}\label{c:neighboring_sequence}
+Given the doubly stochastic matrices $A,B$, there exists a finite sequence of stochastic matrices, $A^0,\ldots,A^T$ such that
+\begin{enumerate}
+    \item $A^0= A$ and $A^T = B$.
+    
+    \item $A^t$ and $A^{t-1}$ are neighboring.
+    
+    \item the column-sum is bounded by $2$, $\sum_{e \in U} A_{ei}^t \leq 2$ for all $1\leq i \leq n$.
+    
+    \item $\sum_{t=1}^T \dfr(A^t, A^{t-1}) = \dfr(A,B)$.
+\end{enumerate}
+\end{claim}
+\begin{example}
+Let the doubly stochastic matrices $A = 
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$, $B = 
+\begin{pmatrix}
+0 & 0 & 1 \\
+1/2 & 1/2 & 0 \\
+1/2 & 1/2 & 0
+\end{pmatrix}$. $A$ can be converted to $B$ with the following sequence neighboring stochastic matrices, 
+\smallskip
+$\begin{pmatrix}
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$,
+$\begin{pmatrix}
+0 & 0 & 1 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$,
+$\begin{pmatrix}
+0 & 0 & 1 \\
+0 & 1 & 0 \\
+0 & 1 & 0
+\end{pmatrix}$,
+$\begin{pmatrix}
+0 & 0 & 1 \\
+1/2 & 1/2 & 0 \\
+0 & 1 & 0
+\end{pmatrix}$,
+$\begin{pmatrix}
+0 & 0 & 1 \\
+1/2 & 1/2 & 0 \\
+1/2 & 1/2 & 0
+\end{pmatrix}$.
+\smallskip
+Notice that the above sequence satisfies all the $4$ requirements of Claim~\ref{c:neighboring_sequence}.
+\end{example}
+
+
+\noindent The notion of neighboring matrices is rather helpful since Lemma~\ref{l:rand_moving_cost} admits a fairly simple proof in case $A,B$ are neighboring stochastic matrices (notice
+that the rounding scheme of
+Algorithm~\ref{alg:rand_rounding} is well-defined even for stochastic matrices). The latter is formally stated and proven in Lemma~\ref{l:neigh} and is the main technical claim of the section.
+
+\begin{lemma}\label{l:neigh}
+Let $\pi^A,\pi^B$ the permutations produced by the rounding scheme of
+Algorithm~\ref{alg:rand_rounding} (given as input) the stochastic matrices $A,B$ that 
+\textbf{i)} are neighboring \textbf{ii)} their column-sum is bounded by $2$, then
+$\mathbb E[\dkt(\pi^A,\pi^B)] \leq 4 \log^2 n \cdot \dfr(A,B)$
+\end{lemma}
+\noindent The proof of Lemma~\ref{l:rand_moving_cost} easily follows by Claim~\ref{c:neighboring_sequence} and Lemma~\ref{l:neigh} (see Appendix~\ref{rand_appendix}). We conclude the section with the proof of Theorem~\ref{t:rand}.
+\begin{proof}[Proof of Theorem~\ref{t:rand}]
+By Lemma~\ref{l:rand_moving_cost} and Lemma~\ref{l:relax},
+$$ \sum_{t=1}^T \mathbb{E}\left[\dkt(\pi^t,\pi^{t-1})\right] \leq 
+4\log^2 n \cdot \sum_{t=1}^T \dfr(A^t,A^{t-1}) \leq 4\log^2 n \cdot \mathrm{OPT}_{\DSSC}
+$$
+
+\noindent Up next we bound the expected covering cost $\sum_{t=1}^T \mathbb{E}\left[\pi^t(R_t)\right]$. Notice that since $\sum_{e \in R_t} A_{e1}^t = 1$, the only elements that can have index $I_e^t = 1$ are the elements $e \in R_t$. As a result, in case there exists some $e$ at round $t$ with $I_e^t = 1$ then $\pi^t(R_t) = 1$.
+\begin{eqnarray*}
+\mathbb{E}\left[\pi^t(R_t)\right] &\leq& 1 + n \cdot \Pr \left[ I_e^t >1 \text{ for all } e\in R_t \right]\\
+&\leq& 1 + n \cdot \Pi_{e \in R_t} \left(1 - \log n \cdot A_{e1}^t\right)\\
+&\leq& 1 + n \cdot e^{- \log n \cdot \sum_{e \in R_t}A_{e1}^t}= 2 \cdot  \pi_{\mathrm{Opt}}^t(R_t)
+\end{eqnarray*}
+where the last inequality follows due to the fact that $\sum_{e \in R_t} A_{e1}^t = 1$ and $\pi_{\mathrm{Opt}}^t(R_t) \geq 1$.
+\end{proof}
+
+\section{Proof of Theorem~\ref{t:greedy}}\label{s:greedy}
+ \noindent In this section we present the basic steps towards the proof of Theorem~\ref{t:greedy}. We remind that $|R_t| \leq r$ and we denote with $e_t$ the element that Algorithm~\ref{alg:greedy_rounding} moves in the fist position at round $t$. As already mentioned, the proof is structured in two 
+ different steps.
+ \smallskip
+ \begin{enumerate}
+     \item We prove the existence of a sequence of doubly stochastic matrices $\hat{A}^0 = \pi^0,\hat{A}^1,\ldots,\hat{A}^T$ such that \textbf{(i)} the entries of each $\hat{A}^t$ are multiples of $1/r$, \textbf{(ii)} each $\hat{A}^t$ admits $1/r$ mass for element $e_t$ in first position $(\hat{A}^t_{e_t 1} \geq 1/r)$ and
+     \textbf{(iii)}
+     $\sum_{t=1}^T \dfr(\hat{A}^t,\hat{A}^{t-1}) \leq \sum_{t=1}^T \dfr(A^t,A^{t-1})$.\smallskip
+     \item We use properties $\textbf{(i)}$ and $\textbf{(ii)}$ to prove that the moving cost of Algorithm~\ref{alg:greedy_rounding} is roughly upper bounded by $\Theta(r^2) \cdot \sum_{t=1}^T \dfr(\hat{A}^t,\hat{A}^{t-1})$.
+ \end{enumerate}
+
+\noindent We start with the construction of the sequence $\hat{A}^0=\pi^0,\hat{A}^1,\ldots,\hat{A}^T$.
+\begin{definition}\label{def:lp_2}
+For the sequence of elements $e_1,\ldots,e_T \in U$ (the elements that Algorithm~\ref{alg:greedy_rounding} moves to the fist position at each round), consider the following linear program,
+\begin{equation*}
+    \begin{array}{ll@{}ll}
+        \text min & \displaystyle \sum_{t=1}^T \dfr(\hat{A}^t,\hat{A}^{t-1})&\\
+        \text{ s.t } & \displaystyle \sum_{i=1}^{n} \hat{A}_{ei}^t = 1 ~~~~~~~~~~\text{for all } e \in U \text{ and } t = 1,\ldots, T  &&\\
+        & \displaystyle \sum_{e \in U} \hat{A}_{ei}^t = 1
+        ~~~~~~~~~~\text{for all } i = 1, \ldots, n \text{ and } t = 1, \ldots, T  &&\\
+        & \displaystyle \hat{A}_{e_t1}^t \geq 1/r ~~~~~~~~~~~\text{for all } t = 1, \ldots, T&\\
+        &\displaystyle \hat{A}^0 = \pi^0 &\\
+        & \displaystyle\hat{A}_{ei}^t\geq 0~~~~~~~~~~~~~~~\text{for all } e \in U, ~i = 1,\ldots, n  \text{ and }t = 1,\ldots, T&\\
+    \end{array}
+\end{equation*}
+\end{definition}
+\noindent The sequence $\hat{A^0}=\pi^0,\ldots,\hat{A}^T$ is defined as the optimal solution of the LP in Definition~\ref{def:lp_2} with the entries of each $\hat{A}^t$ being \textbf{multiples of $1/r$}. The existence of such an optimal solution is established in Lemma~\ref{l:upper_bound_r}.   
+
+\begin{lemma}\label{l:upper_bound_r}
+There exists an optimal solution $\hat{A} = \pi^0,\hat{A}^1,\ldots,\hat{A}^T$ for the linear program of Definition~\ref{l:upper_bound_r} such that entries of each $\hat{A}^t$ are multiples of $1/r$.
+\end{lemma}
+The proof of Lemma~\ref{l:upper_bound_r} is one of the main technical contributions of this work. Due to lack of space its proof is deferred to  Appendix~\ref{s:greedy_appendix}. We remark that the \textit{semi-integrality property}, that Lemma~\ref{l:upper_bound_r} states, is not due to the properties of the LP's polytope and in fact there are simple instances in which the optimal extreme points do not satisfy it. We establish Lemma~\ref{l:upper_bound_r} via the design of an optimal algorithm for the LP of Definition~\ref{def:lp_2} (Algorithm~\ref{alg:greedy_moving}) that always produces solutions with entries being multiples of $1/r$. Up next we describe in brief the idea behind Algorithm~\ref{alg:greedy_moving}.
+
+Given the matrix $\hat{A}^{t-1}$, Algorithm~\ref{alg:greedy_moving} construct $\hat{A}^t$ as follows. 
+At first it moves $1/r$ mass from the left-most entry $(e_t,j)$ with
+$\hat{A}^{t-1}_{e_t j} \geq 1/r$ to the entry $(e_t,1)$. At this point the third constraint of the LP in Definition~\ref{def:lp_2} is satisfied but the column-stochasticity constraints are violated (the first column admits mass $1+1/r$ and the $j$-th column admits mass $1-1/r$). Algorithm~\ref{alg:greedy_moving} inductively restores column-stochasticity from left to right. At step $i$, all the columns on the left of $i$ are restored and the violations concern the column $i$ and $j$ ($i$'s mass is $1+1/r$ and $j$'s mass is $1-1/r$). Now Algorithm~\ref{alg:greedy_moving} must move a total of $1/r$ mass from column $i$ to column $i+1$. In case there exists an element $e$ with total amount of mass greater than $2/r$, Algorithm~\ref{alg:greedy_rounding} moves the $1/r$ mass from the entry $(e,i)$ to the entry $(e,i+1)$. The reason is that even if $e = e_{t'}$
+at some future round $t'$, the third constraint only requires $1/r$ mass. In case there is no such element, Algorithm~\ref{alg:greedy_moving} moves the $1/r$ mass from the element appearing the furthest in the sequence $\{e_t,\ldots,e_T\}$. The latter is in accordance with the optimal eviction policy for $\mathrm{k}-\mathrm{Paging}$ which at each round evicts the page appearing furthest in the future \cite{BBN12}. The optimality of Algorithm~\ref{alg:greedy_moving} is established in Lemma~\ref{l:optimality_Greedy_Moving} of Appendix~\ref{s:greedy_appendix} and the fact that produced solution admits values being $1/r$ is inductively established. 
+
+
+To this end, we can show that all of the desired properties of the sequence $\hat{A} = \pi^0,\hat{A}^1,\ldots,\hat{A}^T$
+are satisfied. Property~$\textbf{(i)}$ is established by Lemma~\ref{l:upper_bound_r}. Property~$\textbf{(ii)}$ is enforced by the constraint $\hat{A}_{e_t 1}^t \geq 1/r$. Now for Property~$\textbf{(iii)}$, notice that by the definition of Algorithm~\ref{alg:greedy_rounding}, $A_{e_t 1}^t \geq 1/r$. As a result, the sequence $A^0=\pi^0,A^1,\ldots,A^T$ is feasible for the linear program of Definition~\ref{def:lp_2} and thus $\sum_{t=1}^T \dfr(\hat{A}^t,\hat{A}^{t-1}) \leq \sum_{t=1}^T \dfr(A^t,A^{t-1})$.
+
+\begin{lemma}\label{l:r_integral}
+Let $\pi^0,\pi^1,\ldots,\pi^T$ the permutations produced by Algorithm~\ref{alg:greedy_rounding} and $e_1,\ldots,e_T$ the elements that Algorithm~\ref{alg:greedy_rounding} moves to the first position at each round $t$. For any sequence of doubly stochastic matrices $\hat{A}^0 = \pi^0,\hat{A^1},\ldots,\hat{A^T}$ for which Property~\textbf{(i)} and~Property~\textbf{(ii)} are satisfied, $\sum_{t=1}^T \dkt(\pi^t,\pi^{t-1}) \leq 2r^2 \cdot  \sum_{t=1}^T \dfr(\hat{A}^t,\hat{A}^{t-1}) + r \cdot T$.
+\end{lemma}
+\noindent The proof of Theorem~\ref{t:greedy} directly follows by Lemma~\ref{l:upper_bound_r} and~\ref{l:r_integral}. In Section~\ref{sub:greedy_1} we present the basic steps for of Lemma~\ref{l:upper_bound_r}.
+\subsection{Proof of Lemma~\ref{l:r_integral}}\label{sub:greedy_1}
+In order to prove Lemma~\ref{l:r_integral}, we make use of an appropriate potential function that can be viewed as an extension of the Kendall-Tau distance (see Definition~\ref{d:KT}) to doubly stochastic matrices with entries being multiples of $1/r$.
+\begin{definition}[\textbf{$r$-Index}]
+The $r$-index of an element $e \in U$ in the doubly stochastic matrix $A$, $I_e^A:=\mathrm{argmin}\{1\leq i \leq n:~ \sum_{s=1}^i A_{es} \geq 1/r\}$
+\end{definition}
+
+\begin{definition}[\textbf{Fractional Kendall-Tau Distance}]\label{d:frac_KT} Given the doubly stochastic matrices $A,B$, a pair of elements $(e, e') \in U \times U$ is inverted if and only if one of the following condition holds,
+\begin{enumerate}
+    \item $I_e^A > I_{e'}^A$ and $I_e^B < I_{e'}^B$.
+    \item $I_e^A < I_{e'}^A$ and $I_e^B > I_{e'}^B$.
+    \item $I_e^A = I_{e'}^A$ and $I_e^B \neq I_{e'}^B$.
+    \item $I_e^A \neq I_{e'}^A$ and $I_e^B = I_{e'}^B$.
+\end{enumerate}
+The fractional Kendall-Tau distance between two doubly stochastic matrices $A,B$, denoted as $\dkt(A,B)$, is the number of inverted pairs of elements. 
+\end{definition}
+\noindent Notice that in case of $0-1$ doubly stochastic matrices the Fractional Kendall-Tau distance of Definition~\ref{d:frac_KT} coincides with the Kendall-Tau distance of Definition~\ref{d:KT}. 
+
+\begin{claim}\label{c:metric}
+Fractional Kendall-Tau Distance satisfies the triangle inequality, $\dkt(A,B) \leq \dkt(A,C) + \dkt(C,B)$.
+\end{claim}
+\noindent In the case of doubly stochastic matrices with their entries being multiples of $1/r$, Fractional Kendall-Tau distance relates to FootRule distance of Definition~\ref{d:distance_lp}.
+\begin{lemma}\label{l:equivalence}
+    Let the doubly stochastic matrices $A,B$ with entries that are multiples of $1/r$. Then $\dkt ( A, B ) \leq 2r^2 \cdot  \dfr( A, B )$.
+\end{lemma}
+
+\noindent We conclude the section with Lemma~\ref{l:potential}.
+Then Lemma~\ref{l:r_integral} follows by Lemma~\ref{l:potential} 
+and~\ref{l:equivalence}.% Note that Lemma~\ref{l:potential} does require the semi-integrality property for the matrix sequence, however the notion of Fractional Kendall-Tau distance is a not meaningful notion of distance since it does not relate with the \textit{min-cost flow} distance of Definition~\ref{d:distance_lp} (Lemma~\ref{l:equivalence} does not apply).
+\begin{lemma}\label{l:potential}
+Let $\pi^0,\pi^1,\ldots,\pi^T$ the permutations produced by Algorithm~\ref{alg:greedy_rounding} and $e_1,\ldots,e_T$ the elements that Algorithm~\ref{alg:greedy_rounding} moves to the first position at each round $t$. For any sequence of doubly stochastic matrices $B^0 = \pi^0,B^1,\ldots,B^T$ with $B_{e_t 1}^t \geq 1/r$,
+$$\sum_{t=1}^T \dkt(\pi^t,\pi^{t-1}) \leq \sum_{t=1}^T \dkt(B^t,B^{t-1}) + r \cdot T
+$$
+\end{lemma}
+The proof of Lemma~\ref{l:potential} is based on the following two inequalities, $\dkt(\pi^t,\pi^{t-1}) + \dkt(\pi^t,B^t) - \dkt(\pi^{t-1},B^t) \leq r$ and $\dkt(\pi^{t-1},B^t) - \dkt(\pi^{t-1},B^{t-1}) \leq \dkt(B^t,B^{t-1})$. The second inequality follows by the triangle inequality established in Claim~\ref{c:metric}. The first follows by the fact that $I_{e_t}^{B^t} = 1$ and the definition of Fractional Kendall-Tau distance (see Appendix~\ref{s:greedy_appendix}).
+
+
+\section{Concluding Remarks}
+In this work we examine the polynomial-time approximability of Dynamic Min-Sum Set Cover. We present $\Omega(\log n)$ and $\Omega(r)$ inapproximability results for general and $r$-bounded request sequences, while we respectively provide $O(\log^2 n)$ and $O(r^2)$ polynomial-time approximation algorithms. Closing this gap is an interesting question that our work leaves open. Another interesting research direction concerns the competitive ratio in the online version of Dynamic Min-Sum Set Cover. 
+\cite{FLPS20} provides an $\Omega(r)$ lower bound and a $\Theta\left(r^{3/2}\sqrt{n}\right)$-competitive online algorithm for $r$-bounded sequences. Designing online algorithms for a relaxation of the problem (such as the $\mathrm{Fractional}-\mathrm{MTF}$) and using the rounding schemes that this work suggests may be a fruitful approach towards closing this gap. 
+
+
+
+
+%\newpage
+%\bibliographystyle{alpha}
+%\bibliographystyle{plainurl}
+\bibliography{references}
+
+
+\newpage
+\clearpage
+
+
+\appendix
+\input{hardness_appendix}
+\input{rand_appendix}
+\input{greedy_appendix}
+\end{document}
+

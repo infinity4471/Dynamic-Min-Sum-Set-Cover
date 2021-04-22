@@ -1,0 +1,395 @@
+\section{Omitted Proofs of Section~\ref{s:greedy}}\label{s:greedy_appendix}
+
+\subsection{Omitted Proofs of Section~\ref{sub:greedy_1}}
+
+\begin{proof}[Proof of Claim~\ref{c:metric}]
+Let $X_{ee'}^{AB} = 1$ if $(e,e')$ is inverted pair for the matrices $A,B$ and $0$ otherwise (respectively for $X_{ee'}^{AC},X_{ee'}^{BC}$). By a short case study one can show that once $X_{ee'}^{AB} = 1$ then
+$X_{ee'}^{AC} + X_{ee'}^{BC} \geq 1$ which directly implies Claim~\ref{c:metric}.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{l:equivalence}]
+    We construct a doubly stochastic matrix $A'$ for which the following properties hold,
+    \begin{enumerate}
+        \item The entries of $A'$ are multiples of $\frac{1}{r}$.
+        \item $\dfr(A,B) = \dfr(A, A') + \dfr(A',B)$.
+        \item $\mathrm{d}_{\mathrm{KT}}( A, A' ) \leq 2r^2 \cdot  \dfr(A, A')$.
+    \end{enumerate}
+    
+\noindent Once the above properties are established, Lemma~\ref{l:equivalence} follows by repeating the same construction until matrix $B$ is reached
+and by using the fact that the \textit{fractional Kendall-Tau distance} of Definition~\ref{d:frac_KT}
+satisfies the triangle inequality.\\
+
+\noindent Before proceeding with the construction of $A'$, we present the following corollary that follows by an easy exchange argument.
+\begin{corollary}\label{c:flow}
+    Let the stochastic matrices $A,B$ with entries multiples of $1/r$, the values $f_{ij}^e$ of the optimal solution in the linear program of Definition~\ref{d:distance_lp} (the min-cost transportation problem defining the FootRule distance $\mathrm{d}_{\mathrm{FR}}(A,B)$) are multiples of $1/r$.
+    \end{corollary}
+
+\noindent In order to construct the matrix $A'$ satisfying the Properties~$1$-$3$, we consider three different classes of the entries $(e,i)$. In particular, we call an entry $(e,i)$.
+    \begin{enumerate}
+        \item \textit{right} if and only if $f_{ij}^e > 0$ for some $j > i$.
+        \item \textit{left} if and only if $f_{ij}^e > 0 $ for some $j < i$.
+        \item \textit{neutral} if and only if $f_{ij}^e = 0$ for all $j \neq i$.
+    \end{enumerate}
+    
+\noindent Note that the above classes do not form a partition of the entries since an entry $(e,i)$ can be both \textit{left} and \textit{right} at the same time.    
+
+\begin{corollary}\label{cor:2}
+    Given two doubly stochastic matrices $A \neq B$, there exist entries $(e,i)$ and $(e',j)$ such that
+    \begin{enumerate}
+        \item $j > i$
+        \item the entry $(e,i)$ is right
+        \item the entry $(e',j)$ is left
+        \item the entry $(\alpha,\ell)$ is \textit{neutral} for all $\alpha \in U$ and $\ell \in \{i+1,j-1\}$
+    \end{enumerate}
+    \end{corollary}
+    
+    We construct the matrix $A'$ from matrix $A$ as follows. Consider two entries $(e,i)$ and $(e',j)$ with the properties that Corollary~\ref{cor:2} illustrates. The doubly stochastic matrix $A'$ is constructed by moving $1/r$ mass from entry $(e,i)$ to entry $(e,j)$ and by moving $1/r$ mass from entry $(e',j)$ to entry $(e',i)$. More formally,
+    \begin{equation*}
+        A'_{\alpha \ell} = 
+        \begin{cases} 
+            A_{\alpha \ell} - \frac{1}{r} & \text{ if } (\alpha,\ell)=(e,i) \\
+            A_{\alpha \ell} - \frac{1}{r} & \text{ if } (\alpha,\ell)=(e',j)\\
+            A_{\alpha k} + \frac{1}{r} & \text{ if } (\alpha,\ell)=(e',i) \\
+            A_{\alpha \ell} + \frac{1}{r} & \text{ if } (\alpha,\ell)=(e,j)\\
+            A_{\alpha \ell} & \text{ otherwise }
+        \end{cases}
+    \end{equation*}
+\noindent Up next we establish the fact that $\dfr(A,B) = \dfr(A,A') + \dfr(A',B)$.
+\begin{claim}
+$\dfr(A',A) = 2|j-i|/r$ and 
+$\dfr(A',B) = \dfr(A,B) - 2|j-i|/r$.    
+\end{claim}
+\begin{proof}
+The fact that $\dfr(A',A) = 2|j-i|/r$ is trivial. We thus focus on showing that 
+$\dfr(A',B) = \dfr(A,B) - 2|j-i|/r$.\\
+
+\noindent Since $(e,i)$ is \textit{right}, there exists an index $\ell(i) >i$ such that $f_{i \ell(i)}^e > 0$. Moreover $f_{i \ell(i)}^e \geq 1/r$ since $f_{i \ell(i)}^e$ is multiple of $1/r$. Notice that $\ell(i) \neq \ell$ for $\ell \in \{i+1,j-1\}$ since all the entries $(\alpha,\ell)$ are \textit{neutral} (otherwise $\sum_{\alpha \in U} B_{\alpha \ell } > 1$). As a result, transfering $1/r$ mass from entry $(e,i)$ to entry $(e,j)$ decreases the FootRule distance between $A$ and $B$ by $1/r\cdot|i-j|$ since the \textit{final destination} of the $1/r$ mass is the entry $(e,\ell(i))$ that is on the right of entry $(e,j)$, $\ell(i) \geq j$. The claim follows by applying the exact same argument for $(e',j)$.    
+\end{proof}
+
+\noindent We now establish the last property that is $\mathrm{d}_{\mathrm{KT}}(A,A') \leq 2r^2 \cdot \dfr(A,A')$.
+    
+    \begin{claim}
+        $\mathrm{d}_{\mathrm{KT}}( A', B ) \leq 4r \cdot | i - j|$
+    \end{claim}
+    
+    \begin{proof}
+        \noindent Notice that apart from $e,e'$, the $r$-index of each element is the same in both $A$ and $A'$ ($I_\alpha^{A} = I_\alpha^{A'}$ for all $\alpha \in U \setminus \{e, e'\}$). As a result, by Definition~\ref{d:frac_KT}, we get that the only inverted pairs can be of the form $(e,\alpha)$ or $(e',\alpha)$.\\
+    
+        \noindent In case $I_e^A \leq i-1$ then $I_e^A = I_e^{A'}$ and there is no inverted pair of the form $(e,\alpha)$. In case $I_e^A = i$ then $i \leq I_e^{A'} \leq j$ and any element $\alpha$ with $I_\alpha^A =
+        I_\alpha^{A'} \in \{1,i-1\}\cup \{j+1,n\}$ cannot form an inverted pair with $e$. As a result, a pair $(e,\alpha)$ can be inverted only if $i \leq I_\alpha^A = I_\alpha^{A'} \leq j$. Since the entries of A are multiples of $1/r$ and $A$ is doubly stochastic, there are at most
+        $r$ positive entries at each column of $A$. As a result, there are at most $r \cdot (j-i+1)$ inverted pairs of the form $(e,\alpha)$. With the symmetric argument one can show that there are at most $r\cdot |j-i+1|$ of the form $(e',\alpha)$. Overall there are at most $2r\cdot |j-i+1|$ inverted pairs between $A$ and $A'$ that are less than $4r\cdot |j-i|$ since $j > i$.
+    \end{proof}
+    \end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{l:potential}]
+Since $B_{e_t}^t \geq 1/r$, the $r$-index of element $e_t$ in matrix $B^t$ is $1$, $I_{e_t}^{B^{t}} = 1$. We first show that, $$\mathrm{d}_{\mathrm{KT}}\left(\pi^t, \pi^{t-1}\right)
++ \mathrm{d}_{\mathrm{KT}}\left(\pi^t, B^{t}\right)
+- \mathrm{d}_{\mathrm{KT}}\left(\pi^{t-1}, B^{t}\right) \leq r$$ 
+To simplify notation let $k_t$ the position of $e_t$ in $\pi^{t-1}$. Notice that $\mathrm{d}_{\mathrm{KT}}\left(\pi^t, \pi^{t-1}\right) = k_t -1$. Out of the $k_t - 1$ elements lying on the left of $e_t$ in $\pi^{t-1}$ there are most $r-1$ elements $\alpha$ with $I_{\alpha}^{B^t} = 1$ (these elements must admit $B_{\alpha 1}^t \geq 1/r$). The rest of the $k_t - 1$ elements admit $r$-index $I_{\alpha}^{B^t} \geq 2$ and thus form inverted pairs with $e_t$ when considering $\pi^{t-1}$ and $B^t$. When $e_t$ moves to the first positions (permutation $\pi^t$) these inverted pairs are deactivated ($I_{e_t}^{B^t} = 1$) and new inverted pairs are created between $e_t$ and $\alpha$ with $I_{\alpha}^{B^t} = 1$, but these new inverted pairs are at most $r$ (for any element $\alpha$ with $I_{\alpha}^{B^t}$, $B^t_{\alpha} \geq 1/r$). Also notice no additional inverted pairs $(e,\alpha)$ (with $e \neq e_t$) are created since the order between all the other elements is the same in $\pi^t$ and $\pi^{t-1}$. Overall,
+$$\underbrace{\mathrm{d}_{\mathrm{KT}}\left(\pi^t, \pi^{t-1}\right)}_{ k_t - 1}
++ \underbrace{\mathrm{d}_{\mathrm{KT}}\left(\pi^t, B^{t}\right)
+- \mathrm{d}_{\mathrm{KT}}\left(\pi^{t-1}, B^{t}\right)}_{\leq -k_t + 1 + r} \leq r$$
+
+\noindent Combining the above inequality with $\mathrm{d}_{\mathrm{KT}}\left(\pi^{t-1}, B^{t}\right)
+- \mathrm{d}_{\mathrm{KT}}\left(\pi^{t-1}, B^{t-1}\right) \leq \mathrm{d}_{\mathrm{KT}}\left(B^t, B^{t-1}\right)$ which follows from the triangle inequality we get,
+$$\mathrm{d}_{\mathrm{KT}}\left(\pi^t, \pi^{t-1}\right)
++ \mathrm{d}_{\mathrm{KT}}\left(\pi^t, B^{t}\right)
+- \mathrm{d}_{\mathrm{KT}}\left(\pi^{t-1}, B^{t-1}\right) \leq \mathrm{d}_{\mathrm{KT}}\left(A^{t}, B^{t-1}\right) +  r.$$
+Finally a telescopic sum gives $\sum_{t=1}^T \mathrm{d}_{\mathrm{KT}}\left(\pi^t, \pi^{t-1}\right) \leq \sum_{t=1}^T \mathrm{d}_{\mathrm{KT}}\left(B^t, B^{t-1}\right)
++ r\cdot T + \mathrm{d}_{\mathrm{KT}}(\pi^0,B^0) - \mathrm{d}_{\mathrm{KT}}(\pi^T,B^T)
+$ where $\mathrm{d}_{\mathrm{KT}}(\pi^0,B^0) = 0$.
+\end{proof}
+
+
+\subsection{Proof of Lemma~\ref{l:upper_bound_r}}\label{sub:greedy_2}
+We prove the existence of an optimal solution $\hat{A^0} = \pi^0,\hat{A^1},\ldots,\hat{A}^T$ for the linear program of Definition~\ref{def:lp_2} for which the entries of each matrix $\hat{A}^t$ are multiples of $1/r$ though the design of an optimal greedy algorithm illustrated in Algorithm~\ref{alg:greedy_moving}.  
+
+The fact that Algorithm~\ref{alg:greedy_moving} produces a solution with entries that multiples of $1/r$ easily follows. Algorithm~\ref{alg:greedy_moving} starts with an integral doubly stochastic matrices ($\hat{A}^0 = \pi^0$) and always moves $1/r$ mass from entry to entry. The optimality of Algorithm~\ref{alg:greedy_moving} is established in Lemma~\ref{l:optimality_Greedy_Moving} the proof of which is presented in the next section since it is quite technically complicated. However the basic idea of the algorithms is very intuitive, once $\hat{A}^{t-1}_{e_t} = 0$ Algorithm~\ref{alg:greedy_moving} moves $1/r$ mass of $e_t$ from its leftmost position (with mass greaer than $1/r$), denoted as $\mathrm{Pos}$ of Step~$5$. At this point of time, Algorithm~\ref{alg:greedy_moving} has violated the column-stochasticity constraints, $1+1/r$ for the first column and $1-1/r$ for the $\mathrm{Pos}$-th column and Algorithm~\ref{alg:greedy_moving} must move at total of $1/r$ mass from the first position to next positions until $1/r$ mass reaches the $\mathrm{Pos}$ position and column-stochasticity is restored (Step~$8$). Once Algorithm~\ref{alg:greedy_moving} detects an element with aggregated mass (until position $j$) $\geq 2/r$, it can safely move $1/r$ of each mass to position $j+1$ since even if this element appears at some point in the future only $1/r$ is necessary to satisfy the constraint $A_{e_t 1}^t \geq 1/r$ and thus the rest is redundant (Step~$11$). In case such an element does not exist, Algorithm~\ref{alg:greedy_moving} moves the (useful) $1/r$ mass of the element appearing the furthest in the remaining sequence $\{e_t,\ldots,e_{T}\}$, which is exactly the same optimal \textit{eviction policy} that the well-studied $k-\mathrm{Paging}$ suggests. 
+
+\begin{lemma}\label{l:optimality_Greedy_Moving} Algorithm~\ref{alg:greedy_moving} produces an optimal solution $\hat{A}^0=\pi^0,\hat{A}^1,\ldots,\hat{A}^T$ for the linear program of Definition~\ref{def:lp_2} while the entries of each $\hat{A}^t$ are multiples of $1/r$.
+\end{lemma}
+
+\begin{algorithm}[t]
+  \caption{An Optimal Greedy Algorithm for the LP of Definition~\ref{def:lp_2} 
+  }\label{alg:greedy_moving}
+  \textbf{Input:} The initial permutation $\pi^0$ and the sequence of elements $e_1,\ldots,e_T \in U$\\
+  \textbf{Output:} An optimal solution of a linear program of Definition~\ref{def:lp_2} where the  entries of $\hat{A}^t$ are multiples of $1/r$.
+
+ \begin{algorithmic}[1]
+        \STATE Initially $\hat{A}^0 \leftarrow \pi_0$
+    
+        \FOR{all rounds $t = 1$ \text{ to } $T$}
+        
+        \STATE $ \hat{A}^t \leftarrow \hat{A}^{t-1}$
+  
+        \IF {$\hat{A}^t_{e_t 1 } <  1/r $} 
+            \STATE \emph{//Move $1/r$ mass of $e_t$ to the first position}
+            
+            \STATE $~~~~~~~~\mathrm{Pos} \leftarrow \text{argmin}_{1 \leq i \leq n} \{A^t_{ei}\geq 1/r\}$
+        
+            \STATE $~~~~~~~~\hat{A}^t_{e1} \leftarrow \hat{A}^t_{e1} + 1/r, \hat{A}^t_{e\mathrm{Pos}} \leftarrow \hat{A}^t_{e\mathrm{Pos}} - 1/r$
+            
+            \STATE \emph{//Restore the column-stochasticity constraints from left to right}
+            \FOR{$j = 1$ \text{ to } $\mathrm{Pos} - 1$}
+        
+    
+            \IF{ there exists $e \in U$ with $\sum_{s=1}^j \hat{A}_{es}^t \geq 2/r$ and $\hat{A}_{es}^t \geq 1/r$}
+    
+                \STATE \emph{//Move $1/r$ of its (redundant) mass to the next position}
+                \STATE $~~~~\hat{A}_{ej}^t \leftarrow \hat{A}_{ej}^t - 1/r$, $\hat{A}_{ej}^t \leftarrow \hat{A}_{ej}^t + 1/r$   
+    
+            \ELSE
+            
+            \STATE \emph{//Move the $1/r$ mass, of the element appearing furthest in the future, to the next position}
+            \STATE $~~~~~~~e^\star \in U \leftarrow$  the element with $\hat{A}_{e^\star j}^t = 1/r$ furthest in $\{e_{t+1},\ldots,e_T\}$
+            
+            \STATE $~~~~~~~\hat{A}_{e^\star j}^t \leftarrow \hat{A}_{e^\star j}^t - 1/r$, $\hat{A}_{e^\star j}^t \leftarrow \hat{A}_{e^\star j}^t + 1/r$
+            \ENDIF    
+            \ENDFOR            
+            
+        \ENDIF 
+    
+        \ENDFOR
+        
+        \RETURN $\hat{A}_1,\ldots,\hat{A}_T$
+  \end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Proof of Lemma~\ref{l:optimality_Greedy_Moving}}
+At first notice that the linear program of Definition~\ref{d:distance_lp} defining the FootRule distance $\dfr(A,B)$ between the stochastic matrices $A,B$ can take the following equivalent form. 
+\begin{equation*}
+    \begin{array}{ll@{}ll}
+        \text min & \displaystyle \sum_{e \in U} \sum_{i = 1}^{n} \left(P_{ei} + M_{ei}\right) &\\
+        \text{ s.t } & P_{ei} - M_{ei} = \displaystyle \sum_{s=1}^i \left(A_{es} - B_{es}\right)~~~\text{for all }e\in U \text{ and } i= 1,\ldots,n &&\\
+        & P_{ei},M_{ei}\geq 0~~~~~~~~~~~~~~~~~~~~~~~~~\text{for all }e\in U \text{ and } i= 1,\ldots,n &\\
+    \end{array}
+\end{equation*}
+\noindent This is due to the fact that 
+$\left(P_{ei} + M_{ei}\right)$ takes the value $|\sum_{s=1}^i \left(A_{es} - B_{es}\right)|$ and it is not hard to prove that $\sum_{e \in U} |\sum_{i = 1}^{n}\left(A_{es} - B_{es}\right)|$ equals $\dfr(A,B)$. As a result, the linear program of Definition~\ref{def:lp_2} takes the following equivalent form,
+\begin{equation*}
+    \begin{array}{ll@{}ll}
+        \text min & \displaystyle \sum_{t=1}^T\sum_{e = 1}^{n} \sum_{i = 1}^{n} \left(P_{ei}^t + M_{ei}^t\right) &\\
+        \text{ s.t } & P_{ei}^t - M_{ei}^t = \displaystyle \sum_{s=1}^i \left(\hat{A}_{es}^t - \hat{A}_{es}^{t-1}\right)~~~~~~~~\text{for all }e\in U \text{ and } t \in \{1,T\} &&\\
+        & \displaystyle \sum_{e \in U} \hat{A}_{ei}^t = 1 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\text{for all }t \in \{1,T\} \text{ and }i \in \{1,n\}
+        &\\
+        & \displaystyle \sum_{i =1}^n \hat{A}_{ei}^t = 1~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\text{for all }t \in \{1,T\} \text{ and }e \in U
+        &\\
+        & \displaystyle \hat{A}_{e_t 1}^t \geq 1/r ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\text{for all }t \in \{1,T\}
+        &\\
+        & \displaystyle \hat{A}_0 = \pi_0&\\
+        & \displaystyle\hat{A}_{ei}^t,P_{ei}^t,M_{ei}^t\geq 0&\\
+    \end{array}
+\end{equation*}
+\noindent In Definition~\ref{def:lp_paging} we construct $n$ different linear programs admitting the property that the sum of their optimal values acts as a lower bound on the optimal solution of the linear program of Definition~\ref{def:lp_2} and will help us establish the optimality of Algorithm~\ref{alg:greedy_moving}. 
+\begin{definition}\label{def:lp_paging}
+For each $1\leq i \leq n$ consider the following linear program,
+\begin{equation*}
+    \begin{array}{ll@{}ll}
+        \text min & \displaystyle \sum_{t=1}^T\sum_{e = 1}^{n} \left(X_{ei}^t + Y_{ei}^t\right) &\\
+        \text{ s.t } & X_{ei}^t - Y_{ei}^t = \displaystyle B_{ei}^t - B_{ei}^{t-1}~~~~~~~~~\text{for all }e\in U \text{ and } t \in \{1,T\} &&\\
+        & \displaystyle \sum_{e \in U} B_{ei}^t = i ~~~~~~~~~~~~~~~~~~~~~~~~\text{for all }t \in \{1,T\}
+        &\\
+        & \displaystyle B_{e_t i}^t \geq 1/r ~~~~~~~~~~~~~~~~~~~~~~~~~\text{for all }t \in \{1,T\}&\\
+        & \displaystyle B_{e i}^0 = \sum_{s=1}^i \hat{A}^0_{es}~~~~~~~~~~~~~~~~~~~~~\text{for all }e \in U&\\
+        & X_{ei}^t,Y_{ei}^t, B_{ei}^t \geq 0~~~~~~~~~~~~~~~~~~\text{for all }e \in U \text{ and }t \in \{1,T\}&\\
+    \end{array}
+\end{equation*}
+\end{definition}
+
+ \noindent Let $\hat{A}^0 = \pi^0,\hat{A}^1,\ldots, \hat{A}^T$ denote the optimal solution of the linear program of Definition~\ref{def:lp_2}. Notice that,
+$$\sum_{t=1}^T \dfr(\hat{A}^t,\hat{A}^{t-1}) \geq  
+\sum_{i=1}^n\sum_{t=1}^T\sum_{e \in U} \left(X_{ei}^t + Y_{ei}^t\right)
+$$
+where $X_{ei}^t,Y_{ei}^t$ denote the values of the respective variables in the optimal solution of the $i$-th linear program in Definition~\ref{def:lp_paging}. This is due to the fact that setting $B_{ei}^t = \sum_{s=1}^i A_{es}^t$ produces a feasible solution for the $i$-th linear program in Definition~\ref{def:lp_paging}. We will prove that for the sequence $\hat{A}^0 = \pi^0,\hat{A}^1,\ldots, \hat{A}^T$ produced by Algorithm~\ref{alg:greedy_moving},
+$$\sum_{t=1}^T \dfr(\hat{A}^t,\hat{A}^{t-1}) =
+\sum_{i=1}^n\sum_{t=1}^T\sum_{e \in U} \left(X_{ei}^t + Y_{ei}^t\right)
+$$
+which implies optimality.\\
+\noindent To this end, we present a very natural interpretation of the $i$-th linear program in Definition~\ref{def:lp_paging} that will help us design an optimal greedy algorithm (Algorithm~\ref{alg:greedy_paging}) for solving the linear programs of Definition~\ref{def:lp_paging}.  Each of the linear programs of Definition~\ref{def:lp_paging} can be viewed as a \textit{fractional version} of the well-known $k-\mathrm{Paging}$~\cite{}. In Definition~\ref{d:frac_paging} we provide this alternative and more intuitive definition for the linear programs of Definition~\ref{def:lp_paging}. 
+\begin{definition}[Fractional Paging]\label{d:frac_paging}
+Given a sequence of elements $e_1,\ldots,e_T$ and an initial vector $S^0$ such that $|S^0| = n$, $0 \leq S_e^0 \leq 1$ and
+$\sum_{e \in U}S_e^0 = i$. Compute a sequence of vectors $S_1,\ldots,S_T$ such that
+
+\begin{enumerate}
+    \item $0 \leq S_e^t \leq 1$
+    
+    \item $\sum_{e \in U} S_e^t = i$
+    
+    \item $S_{e_t}^t \geq 1/r$ for $1\leq t \leq T$
+\end{enumerate}
+and the quantity $\sum_{t=1}^T \sum_{e \in U} | S_e^t - S_e^{t-1}|$ is minimized.
+\end{definition}
+
+\noindent In Algorithm~\ref{alg:greedy_paging} we present a generalization the classical greedy eviction policy (\textit{evict the page arriving latter in the future}) that is  the optimal policy for the original paging problem.
+
+\begin{algorithm}[H]
+  \caption{Greedy Algorithm for Fractional Paging}\label{alg:greedy_paging}
+  \textbf{Input:} An initial vector $S_0$ and a sequence of elements $e_1,\ldots,e_T \in U$\\
+  \textbf{Output:} A sequence of vectors $S_1,\ldots,S_T$.
+
+ \begin{algorithmic}[1]
+        \FOR{$t = 1$ \text{ to } $T$}
+        
+        \STATE $S^t \leftarrow S^{t-1}$
+        
+        \STATE $S^t_{e_t} \leftarrow S^t_{e_t} + \text{min} \left( 1/r  - S_{e_t}^t\right)$
+        
+        \FOR{each element $e \in U$}
+        \STATE \emph{//Remove first the redundant mass.}
+        \IF{$S_e^t \geq 2/r$ and $\sum_{e \in U}S_e^t \geq i$ }
+        
+            \STATE $S_e^t \leftarrow S_e^t - \text{min}\left( S_{e_t}^t - 1/r , 
+            \sum_{e \in U}S_e^t - i
+            \right)$
+        \ENDIF    
+        \STATE \emph{//If redundant mass is not enough, remove mass from the elements arriving latter in the future.}
+        
+        \STATE $t^\star(e) \leftarrow \text{the first time } s\geq t \text{ such that } e_s = e$.
+        
+        \STATE Sort the elements in decreasing order according to $t^\star(e)$.
+        
+        \FOR {all elements $e \in U$ (according to the previous ordering)}
+        
+        \STATE $S_e^t \leftarrow S_e^t - \text{min}(S_e^t, \sum_{e \in U} S_e^t - i)$.
+        \ENDFOR
+        
+        \ENDFOR
+
+        \ENDFOR
+        
+        \RETURN $S_1,\ldots,S_T$
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{lemma}
+Algorithm~\ref{alg:greedy_paging} is optimal for the fractional paging.
+\end{lemma}
+\begin{proof}
+Let $O^t$ denote the vector of the optimal solution of the Fractional Paging of Definition~\ref{d:frac_paging}
+at round $t$, for $1 \leq t \leq T$. Without loss of generality we assume that $O_\alpha^t \geq O_\alpha^{t-1}$ for $\alpha = e_t$ and $O_\alpha^t \leq O_\alpha^{t-1}$ for $\alpha \neq e_t$.
+
+We first construct a sequence of vectors $S^t$ for $1\leq t \leq T$ such that the vector $S^1$ agrees with Algorithm~\ref{alg:greedy_paging} and the cost of the vector sequence $S^1,\ldots,S^T$ is optimal. Once this established the proof follows inductively.
+
+Before presenting the construction we partition the elements into the following $3$ classes. 
+The set \textit{neutral} denoted by $N_t$ denotes the elements $e$ for which $S_e^t = \text{min}(1/r , O_e^t)$. The set of \textit{greater elements at round $t$}, denoted by $G_t$, which are all elements $e \notin N_t$ and $S_e^t \geq O_e^t$. Finally we have the set of \textit{smaller elements} $L_t$ which are all $e \notin N_t$ and $S_e^t < O_e^t$. The vector sequence $\{S^t \}_{2\leq t \leq T}$ is inductively defined as follows: \textbf{For each round $t \geq 2$,}
+
+\begin{enumerate}
+    \item If $O_e^t \geq O_e^{t-1}$
+    \begin{itemize}
+        \item If $e \in N_{t-1}$ then $S_e^t = \text{min}( 1/r , O_e^t)$.
+        
+        \item If $e \in G_{t-1}$ then $S_e^t =S_e^{t-1} + \text{min}\left(\min(O_e^t,1/r) - S_e^{t-1},0\right)$.
+                
+        \item If $e \in L_{t-1}$ then $S_e^t = S_e^{t-1} + \min(O_e^t - O_e^{t-1},1/r - S_e^{t-1})$.
+    \end{itemize}
+    
+    \item If $O_e^t < O_e^{t-1}$
+    \begin{itemize}
+        \item If $e \in N^{t-1}$ then $S_e^t = \text{min}( 1/r , O_e^t)$.
+        
+        \item If $e \in G^{t-1}$ then $S_e^t = S_e^{t-1} - O_e^{t-1} +  O_e^t$.
+                
+        \item If $e \in L^{t-1}$ then $S_e^t = S_e^{t-1} - \text{max}(S_e^{t-1} -O_e^t , 0)$.
+    \end{itemize}
+\end{enumerate}
+
+\noindent Finally in case $\sum_{e \in U}S_e^t > i$, we additionally subtract total amount of $\sum_{e \in U}S_e^t - i$ from the elements $S_e^t \geq O_e^t$. As a result, the cost of round $t$ is
+
+\[
+\sum_{e \in S_e^t \geq S_e^{t-1}}(S_e^t - S_e^{t-1}) + \sum_{e \in S_e^t \leq S_e^{t-1}}(S_e^{t-1} - S_e^t) + \sum_{e \in U}S_e^t - i = 2 \sum_{e \in S_e^t \geq S_e^{t-1}}(S_e^t - S_e^{t-1})\]
+By the definition of $S^t$, 
+\[2\sum_{e \in S_e^t \geq S_e^{t-1}}(S_e^t - S_e^{t-1}) = 2\sum_{e \in O_e^t \geq O_e^{t-1}}(S_e^t - S_e^{t-1}) \leq 2\sum_{e \in O_e^t \geq O_e^{t-1}}(O_e^t - O_e^{t-1}) = ||O^t - O^{t-1}||_1 \]
+As a result, we overall get that 
+$\sum_{t=1}^T||S^t - S^{t-1}||_1 \leq  \sum_{t=1}^T||O^t - O^{t-1}||_1$.
+\\
+
+\noindent Up next we prove that the solution $S_1,\ldots,S_T$ is a feasible solution for \textit{fractional paging}.\\
+
+\noindent At first observe that an element $e$ can only go from the state form the state of \textit{greater} to the state of \textit{neutral} 
+and from the state of \textit{smaller} to the state of \textit{neutral}. Moreover observe that \textit{once an element becomes neutral it remains neutral forever}.\\
+
+\noindent The only case that the constructed solution $S^1,\ldots,S^T$ is not feasible is by having $e \in L^t$ with $e=e_t$ for some round $t$ (otherwise $S_e^t \geq O_e^t \geq 1/r$). Combining the latter with the previous observation we get that $e \in L^\ell$ for all $1 \leq \ell \leq t$. Moreover $S_e^t < 1/r$.\\
+
+\noindent We consider the mutually exclusive cases $S_e^1 < 1/r$ and $S_e^1 \geq 1/r$.\\
+
+\noindent Let us start with $S_e^1 < 1/r$. By Algorithm~\ref{alg:greedy_paging}, we get that $e \neq e_1$ and thus $O_e^1 \leq S_e^0$ ($S^0 =O^0$) and since $e \in L^1$, we get that $S_e^1 < S_e^0$. Since $S_e^1 < 1/r$ and $S_e^1 < S_e^0$ by Steps $4-8$ of Algorithm~\ref{alg:greedy_paging}, we get that for $\alpha \in U$, $S_\alpha^1 \leq 1/r$ (all the redundant mass is removed before useful is removed). Moreover by Steps~$11-14$ we get that for all $\alpha \in G^1$, $t^\ast(\alpha) < t^\ast(e)$\footnote{Let $\alpha \in G_1$ with $t^\ast(\alpha) > t^\ast(e)$
+then by Step~$11$ and~$12$ of Algorithm~\ref{alg:greedy_paging} $S_\alpha^1 =0$, something that cannot be true, since $\alpha \in G_1$.
+}. Finally notice that in case $S_\alpha^{t-1}<1/r, \alpha = e_t$ and $\alpha \in G^{t-1}$ then $\alpha$ becomes neutral, $\alpha \in N^t$. This implies that until round $t^\ast(e)$ all elements $\alpha \in G^1$ have become neutral. As a result, at round $t^\star(e)$ all elements $\alpha \in G^1$ have become neutral which means that for all elements $\alpha \in U / \{e\},~~ S^t_\alpha \leq O^t_\alpha$. If $e \in L^t$ then $\sum_{\alpha \in U} S_\alpha ^t < \sum_{\alpha \in U} O_\alpha^t$ which is a contradiction. Thus $ S_{e}^{t^\ast(e)} \geq 1/r$.\\
+
+\noindent In either the case $S_e^1 
+\geq 1/r$ or $ S_{e}^{t^\ast(e)} \geq 1/r$ (that follows in case $S_e^1 
+< 1/r$) we get that there exists an $\ell \leq t$ such that $S_e^{\ell-1} \geq 1/r $ and 
+$S_e^{\ell} < 1/r $. Since $e \in L^{\ell - 1}$, we get that $S_e^\ell = S_e^{\ell-1} - \max(S_e^{\ell-1}-O_e^\ell,0)$ which implies that $S_e^\ell = O_e^\ell$ and thus $e$ becomes neutral.
+\end{proof}
+
+\noindent We conclude the section with the proof of Lemma~\ref{l:optimality_Greedy_Moving}. We set $B_{ei}^t = \sum_{s=1}^i \hat{A}_{es}^t$ where $\hat{A}^0 = \pi^0, \hat{A}^1,\ldots,\hat{A}^T$ are the stochastic matrices produced by Algorithm~\ref{alg:greedy_moving}. We show that for $i=1,\ldots,n$ the constructed sequence $B_{ei}^0, \ldots,B_{ei}^T$ is \textit{consistent} with Algorithm~\ref{alg:greedy_paging}, meaning that the $B_{ei}^0, \ldots,B_{ei}^T$ could have been the output of Algorithm~\ref{alg:greedy_paging}. As a result,
+
+\begin{enumerate}
+    \item Each $\sum_{t=1}^T \sum_{e \in U} \left(X_{ei}^t + Y_{ei}^t \right)$ equals the optimal value of the $i$-th linear program in Definition~\ref{def:lp_paging}.
+    
+    \item $ \sum_{i=1}^n \sum_{t=1}^T \sum_{e \in U} \left(X_{ei}^t + Y_{ei}^t \right) = \sum_{t=1}^T \dfr(\hat{A}^t,\hat{A}^{t-1})$ since we can set $P_{ei}^t = X_{ei}^t$ and $M_{ei}^t = Y_{ei}^t$ ($B_{ei}^t = \sum_{s=1}^i \hat{A}_{es}^t$).
+\end{enumerate}
+
+\noindent The latter two properties establish the optimality of Algorithm~\ref{alg:greedy_moving}.
+\smallskip
+
+
+\noindent We now prove that the sequence $B_{ei}^0, \ldots,B_{ei}^T$ where $B_{ei}^t = \sum_{s=1}^i \hat{A}_{es}^t$ is consistent with Algorithm~\ref{alg:greedy_paging}. We emphasize that we prove this under the condition that the initial vector $B_{ei}^0$ is a $0-1$ vector which simplifies a lot the actions of Algorithm~\ref{alg:greedy_paging}. In particular and an easy induction argument reveals that when the initial vector $B_{ei}^0$ is a $0-1$ vector then the vectors produced by Algorithm~\ref{alg:greedy_paging} admit entries with multiples of $1/r$, something that is obviously true for the sequence $B_{ei}^0, \ldots,B_{ei}^T$ since $B_{ei}^t = \sum_{s=1}^i \hat{A}_{es}^t$.
+
+Let $B_{e_t i}^t = B_{e_t i}^{t-1}$, this is the case where $B_{e_t i}^{t-1} \geq 1/r$. In order to ensure consistency with Algorithm~\ref{alg:greedy_paging}, we need to show that $B_{ei}^t =  B_{ei}^{t-1}$ for all $e \in U$ (see Step~$3$ of Algorithm~\ref{alg:greedy_paging}). By the fact that $B_{e_t i}^t =  B_{e_t i}^{t-1}$ we get that
+$\sum_{s=1}^i \hat{A}_{e_t s}^t = \sum_{s=1}^i \hat{A}_{e_t s}^{t-1}$ which by Algorithm~\ref{alg:greedy_moving} implies that $\hat{A}_{ej}^{t-1} \geq 1/r$ for some $j \leq i$. The latter together with Algorithm~\ref{alg:greedy_moving} (see Step~$9$ of Algorithm~\ref{alg:greedy_moving}) implies that $\sum_{s=1}^i \hat{A}_{ei}^t =  \sum_{s=1}^i \hat{A}_{ei}^{t-1}$ for all $e \in U$. Thus, $B_{ei}^t =  B_{ei}^{t-1}$.\\
+
+\noindent Let $B_{e_t i}^t = B_{e_t i}^{t-1} + 1/r$, this is the case where $B_{e_t i}^{t-1}=0$. To establish consistency with Algorithm~\ref{alg:greedy_paging} we need to prove that there exists a unique $e^\ast$ with $B_{e^\ast i}^t =  B_{e^\ast i}^{t-1} - 1/r$ and one of the following holds,
+\begin{enumerate}
+    \item $B_{e^\ast i}^{t-1} \geq 2/r~$ (Condition~$6$ in Algorithm~\ref{alg:greedy_paging})
+    
+    \item $B_{ei}^{t-1} \leq 1/r$ for all $e \in U$ and $B_{e^\ast i}^{t-1} = 1/r$ is the element appearing furthest in the sequence $\{e_{t+1},\ldots,e_T\}$
+    (Condition~$6$ in not met and Algorithm~\ref{alg:greedy_paging} continues in Steps~$11-14$).
+\end{enumerate}
+
+
+
+\noindent Step~$9-14$ of Algorithm~\ref{alg:greedy_moving} guarantees that the existence of a unique element $e^\ast$ such that $\sum_{s=1}^i \hat{A}_{e^\ast s}^t = \sum_{s=1}^i \hat{A}_{e^\ast s}^{t-1} -1/r$ which implies the existence of a unique element $e^\ast$ with $B_{e^\ast i}^t =  B_{e^\ast i}^{t-1} - 1/r$ since $B_{e^\ast i}^t =\sum_{s=1}^i\hat{A}_{e^\ast s}^{t}$. In case $\sum_{s=1}^i \hat{A}_{e^\ast s}^{t-1} \geq 2/r$ then we are done. So let us assume that $\sum_{s=1}^i \hat{A}_{e^\ast s}^{t-1} = 1/r$. This implies that $\sum_{s=1}^i \hat{A}_{e s}^{t-1} \leq 1/r$ for all $e \in U$ since otherwise Algorithm~\ref{alg:greedy_moving} would have moved an element $e'$ with $\sum_{s=1}^i \hat{A}_{e' s}^{t-1} \geq 2/r$ (see Step~$11$ of Algorithm~\ref{alg:greedy_moving}). The fact that $e^\ast$ is the element with $\sum_{s=1}^i \hat{A}_{e^\ast s}^{t-1} = 1/r$ appearing furthest in the sequence $\{e_{t+1},\ldots,e_T\}$ is ensured by Step~$14$ of Algorithm~\ref{alg:greedy_moving}.
+%% PANAGIOTIS COMMENTED OUT
+
+%\begin{proof}
+%We use the following Algorithm for constructing the finite sequence of stochastic matrices.
+
+%\begin{algorithm}[H]
+%  \caption{Neighboring Matrix Sequence Construction}\label{alg:mat_construction}
+%  \textbf{Input:} Two stochastic matrices $A, B$ \\
+%  \textbf{Output:} A finite sequence of matrices $A_0 = A, A_1, ..., A_T = B$ satisfying the conditions of claim \ref{c:neighboring_sequence}.
+%\begin{algorithmic}[1]
+%    \STATE Compute the flow allocation $f_{ij}^e$ for matrices $A, B$.
+%    \STATE $A_0 = A$
+%    \STATE $t \leftarrow 1$
+%    \FOR{each element $e \in U$}
+%        \WHILE{$A_e \neq B_e$}
+%            \STATE pick $i, j \text{ with } i < j$ such that $f_{ij}^e \neq 0$.
+%           \STATE Suppose $f_{ij}^e > 0$, completely symmetrical for negative case.
+%            \FOR{$k \text{ from } i \text{ to } j - 1$}
+%               \STATE $A_{ek} \leftarrow A_{ek} - f_{kj}^e$
+%                \STATE $A_{e{(k+1)}} \leftarrow A_{e(k+1)} + f_{kj}^e$
+%               \STATE $f_{(k+1)j}^e \leftarrow f_{(k+1)j}^e + f_{kj}^e$
+%               \STATE $f_{kj}^e \leftarrow 0$
+%               \STATE $A_t \leftarrow A$
+%               \STATE $t \leftarrow t + 1$
+%            \ENDFOR
+%        \ENDWHILE
+%    \ENDFOR
+%    \STATE $T \leftarrow t - 1$
+%    \STATE    \textbf{return } $\{A_0, A_1, ..., A_T\}$
+%  \end{algorithmic}
+%\end{algorithm}
+%\noindent At each step we select two indices $i < j$ such that $f_{ij}^e \neq 0$ and we move the appropriate amount of mass at position $i+1$. We will now show that each condition of claim \ref{c:neighboring_sequence} is satisfied.
+
+%\begin{enumerate}
+%    \item $A_0= A$ and $A_T = B$. Our algorithm begins with setting $A_0=A$ and terminates if and only if $A_t = B$ for some t so condition 1 is satisfied.
+%    \item $A_t$ and $A_{t-1}$ are \textit{neighboring}. This constraint is satisfied trivially. At each time step we move some mass from an entry immediately to the right and therefore $A_t$ and $A_{t-1}$ are neighboring for all t.
+%    \item $\sum_{e \in U} A_{ei}^t \leq 2$. Consider the phase of the algorithm where we need to move some amount of mass $0 < f_{ij}^e \leq 1$ from position i to position j. Without loss of generality suppose $i < j$. Let $colsum(k)$ denote the column sum of some column k. That is $colsum(k) = \sum_{e \in U} A_{ek}$. Notice that after the end of this phase $colsum(k) \leq 1$ for all k, since we moved the mass from the entry (e,i) to the entry (e,j).
+    
+%    Suppose we move the mass from the entry (e,k) to the entry (e,k+1). Inductively, we have that $colsum(k) \leq 1 + f_{ij}^e \leq 2$ and $colsum(k+1) \leq 1$. After the move we have $colsum(k) \leq 1$ and $colsum(k+1) \leq 1 + f_{ij}^e \leq 2$. Therefore our condition is satisfied. 
+    
+%    \item $\sum_{t=1}^T \dfr(A_t, A_{t-1}) = \dfr(A,B)$. Observe that our algorithm moves exactly the amounts of mass to the position described by our Optimal Flow Allocation. Specifically, for each entry $m = f_{ij}^e > 0$ we move an amount of mass $m$ from position $i$ to position $j$ through a sequence of neighboring doubly stochastic matrices. Therefore from each entry $f_{ij}^e$ we have a contribution of $|j-i| \cdot f_{ij}^e$ and summing over all entries we get: $\sum_{t=1}^T d(A_t, A_{t-1}) = \sum_{e \in U} \sum_{i \leq n} \sum_{j \leq n} |i-j| \cdot f_{ij}^e = d(A,B)$.
+%\end{enumerate}
+%\end{proof}
