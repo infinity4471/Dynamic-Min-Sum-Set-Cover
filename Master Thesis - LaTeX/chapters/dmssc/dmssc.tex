@@ -1,0 +1,14 @@
+%The online version of $\DSSC$ belongs to a rich family of online problems called \emph{Metrical Task Systems} see e.g., \cite[Chapter~9]{BEY98} and the references therein), which also includes several fundamental online problems (e.g., paging, $k$-server, convex body chasing). 
+
+%The online version of $\DSSC$ generalizes the dynamic List Update problem, which has been extensively studied . The classical \emph{Move-to-Front} (MTF) algorithm, which moves the (unique) element of the request to the first position of the permutation, is known to be $2$-competitive \cite{ST85}. There are several other $2$-competitive algorithms~\cite{Albers98,EY96}. For randomized algorithms, the best known competitive ratio is 1.6~\cite{ASW95} and the best lower bound is 1.50115~\cite{ambuhl2002list}. The offline version of dynamic List Update corresponds to $\DSSC$ with singleton requests. It is $\mathrm{NP}$-hard \cite{Amb00} and can be solved in time $O(2^n (n-1)! T)$ \cite{RW96} and in time $O(2^n 3^{n!} (n!)^2 + nT)$ \cite{Hage07}, i.e., in time exponential in $n$ but polynomial in $T$. 
+\chapter{Approximation Algorithms for Multistage Min Sum Set Cover}
+
+\input{chapters/dmssc/definitions}
+
+\input{chapters/dmssc/algorithms}
+
+\input{chapters/dmssc/randomized_rounding}
+
+\input{chapters/dmssc/greedy_rounding}
+
+\input{chapters/dmssc/remarks}

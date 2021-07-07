@@ -1,0 +1,71 @@
+\section{The List Update Problem}
+
+\noindent 
+The List Update problem is one of the classical and well studied problems in online optimization \cite{ST85}. We are given a permutation of $\{ 1,2, ...,n \}$ and set of request elements $r_1, r_2, ..., r_m$ where $r_i \in \{ 1,2,...,n \}$. For each request $r_i$ we pay the cost of accessing it which is the position of the element $r_i$ in the current permutation. Then, we can choose to move this element closer to the front of the list for free in order to accommodate future requests. \\
+
+In the online version of the problem when we are given a specific request we don't know anything about future requests.
+
+\subsection{A naive algorithm for List Update}
+A natural first attempt for an algorithm is to order the list based on the current access frequency of the keys.  Intuitively, this algorithm seems reasonable since if we want to keep our overall search cost low, we want more frequently requested elements to be closer to the front of the list.  Also note this ordering can be maintained in the model of the problem, since when the currently requested key can only move up infrequency rank when it is requested.Unfortunately, the following lemma shows that ordering by frequency is trivially bad with respect to competitive analysis.
+
+\begin{lemma}\label{l:frequency_bad}
+    The \emph{Order By Frequency} algorithm is $\Omega( n )$ competitive.
+\end{lemma}
+
+\begin{proof}
+    Suppose we start from the sorted permutation $[ 1,2,3,...,n ]$. Consider the  following request sequence: element 1 requested n times, element 2 requested n times, ..., element n requested n times. Now consider the frequency cost of the second half elements requested, that is elements $n/2, n/2 + 1, ..., n$. Each of these requests has a cost of at least $n/2$ since the first $n/2$ keys all have a cost of n. Therefore, the total cost of the algorithm is $\Omega(n^3)$. \\
+    
+    Next, we show that there is an algorithm that achieves $O(n^2)$ total cost. If we move each requested element to the front of the list we can see that the overall total cost is $O(n^2)$. Therefore, the competitive ration of the order by frequency algorithm is $\Omega(n)$.
+\end{proof}
+
+\subsection{The Move to Front Algorithm}
+Motivated by the proof of lemma~\ref{l:frequency_bad} we propose a natural algorithm for the List Update Problem. Move the requested element to the front of the list. This algorithmic schema that is also used on the next chapter although simple achieves $O(1)$ competitiveness. In particular the Move to Front(MTF) algorithm is 2-competitive for the List Update problem.
+
+\begin{lemma}\label{l:mtf_competitive}
+    The MTF Algorithm is 2-Competitive for List Update.
+\end{lemma}
+
+\subsection{Proof of Lemma~\ref{l:mtf_competitive}}\label{s:proof_mtf}
+
+To prove the 2-competitiveness of the MTF algorithm we use the potential method. We define a function $\Phi: [0, m] \rightarrow \mathbb{Z}$ that maps the state of the permutation after each request to an integer. Our aim is for $\Phi( i )$ to capture the distance of our permutation from the optimal permutation after serving the request $r_i$. \\
+
+Next, we define the amortized cost based on our potential function. Let $A(i) = MTF(i) + \Phi(i) - \Phi(i-1)$ where $MTF(i)$ is the cost that Move-To-Front pays for serving the i-th request. Observe that:
+
+\begin{equation}\label{e:amortized_cost}
+    \sum_{i=1}^m A(i) = \sum_{i=1}^m MTF(i) + \Phi(i) - \Phi(i-1) = \Phi(m) - \Phi(0) + \sum_{i=1}^m MTF(i)
+\end{equation}
+
+Therefore, if we define the potential function in way such that $\Phi(m) - \Phi(0) > 0$ then the sum of the amortized cost for all the requests is an upper bound for the cost of our MTF algorithm.
+
+To define our potential function, let $V(i)$ be the set of pairs $(x,y)$ such that x in the permutation maintained by MTF is inverted with respect to y in the optimal permutation after serving the request i. To clarify what this means, let $Pos( \pi^i, x)$ be the index of x in the permutation $\pi^i$, that is $Pos(x) = (\pi^i)^{-1}(x)$. Let $o^i$ be the optimal permutation at time i, that is the permutation maintained by the optimal offline algorithm after serving the request i. Now we define:
+
+\begin{equation*}
+    V(i) = \{ ( x,y ) \in [1, n] \times [1,n] \text{ s.t } Pos( \pi^i, x ) < Pos( \pi^i, y ) \land Pos( o^i, x ) > Pos( o^i, y )
+\end{equation*}
+
+So $V(i)$ is the set of pairs (x,y) such that x comes before y in the permutation maintained by MTF but x comes after y in the optimal permutation. We define $\Phi(i) = |V(i)|$ and now we are ready to state our lemma:
+
+\begin{claim}\label{c:amortized_bound}
+    Let $A(i)$ be the amortized cost as defined on \ref{e:amortized_cost}. Let $OPT(i)$ be the cost of the optimal solution after serving the i-th request, then $A(i) \leq 2 \cdot OPT(i)-1$.
+\end{claim}
+
+\begin{proof}
+    Let $r_i$ be the i-th request. Let k be the number of elements that come before $r_i$ in both the MTF and the optimal permutation and let l be the number of elements that come before $r_i$ in the MTF permutation but after $r_i$ in the optimal permutation. Based on these definitions we have $MTF(i) = l + k + 1$ and also $OPT(i) \geq k + 1$. Now observe that if we move $r_i$ to the front of the list then we create at most k new inversions and we destroy exactly l inversions. Therefore $\Phi(i) - \Phi(i-1) \leq k - l$. Putting everything together we obtain:
+    \begin{equation*}
+        A(i) = MTF(i) + \Phi(i) - \Phi(i-1) \leq l + k + 1 + ( k - l ) = 2 \cdot k + 1 \leq 2 \cdot ( OPT(i) - 1 ) \leq 2 \cdot OPT(i) - 1
+    \end{equation*}
+    
+    \noindent Which finishes the proof.
+\end{proof}
+
+Now we are ready to prove that MTF is 2-competitive for List Update. By combining \ref{e:amortized_cost} and lemma \ref{c:amortized_bound} we obtain $MTF = \sum_{i=1}^m MTF(i) \leq 2*OPT - m + \Phi(0) - \Phi(m) \leq 2*OPT - m + \binom{n}{2}$. The final step is obtained from the fact that $\Phi(0) = 0$ and $\Phi(i) \leq \binom{n}{2}$ since the number of inversions are always bounded by $\binom{n}{2}$.
+
+\subsection{Lower Bound on the Competitive Ratio}
+
+In this section we prove that any online algorithm for the List Update problem is at least 2-competitive.
+
+\begin{proof}
+    For any online algorithm produce an adversarial instance as follows: Set request $r_i$ equal to the last element of the current permutation. Obviously, for a permutation of length n and m requests the cost of any online algorithm is nm. We will show that there is a sequence of permutations such that its total cost is at most $\frac{nm}{2}$. \\
+    
+    Consider a sequence of random permutations. The expected cost for serving the request $r_i$ is $\frac{n}{2}$ therefore the expected cost of the random sequence of permutations is $\frac{nm}{2}$. By a probabilistic argument we obtain that there is a sequence of permutations with cost at most $\frac{nm}{2}$ which finishes the proof.
+\end{proof}

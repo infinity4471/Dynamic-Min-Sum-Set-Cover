@@ -1,0 +1,170 @@
+\section{Proof of Theorem~\ref{t:rand}}\label{s:rand}
+The basic step towards the proof of Theorem~\ref{t:rand} is Lemma~\ref{l:rand_moving_cost}, establishing the fact that once two doubly stochastic matrices are given as input to the randomized rounding of Algorithm~\ref{alg:rand_rounding}, the expected distance of the produced permutations is approximately bounded by the distance of the respective doubly stochastic matrices.
+\begin{lemma}\label{l:rand_moving_cost}
+Let the doubly stochastic matrices $A,B$ given as input to the
+rounding scheme of
+Algorithm~\ref{alg:rand_rounding}. Then for the produced permutations
+$\pi^A,\pi^B$, 
+$
+\mathbb{E}\left[ \dkt(\pi^A,\pi^B) \right] \leq 4\log^2 n \cdot \dfr(A,B)$.
+\end{lemma}
+
+\noindent Before exhibiting the proof of Lemma~\ref{l:rand_moving_cost} we introduce the notion of \textit{neighboring matrices}.
+\begin{definition}(Neighboring stochastic matrices)
+The stochastic matrices $A,B$ are neighboring if and only if they differ in exactly two entries lying on the same row and on consecutive columns.
+\end{definition}
+\begin{example}
+Let $A = 
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$, $B = 
+\begin{pmatrix}
+1/2 & 1/2 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$ and $C = 
+\begin{pmatrix}
+1 & 0 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$. The pair of matrices
+$(A,B)$ and $(A,C)$ are neighboring while $(B,C)$ are not.
+\end{example}
+
+\noindent Any doubly stochastic matrix $A$ can be converted to another doubly stochastic matrix $B$ through an intermediate sequence of neighboring stochastic matrices all of which are \textit{almost doubly stochastic}
+and their overall moving cost equals $\mathrm{d}_{\mathrm{FR}}(A,B)$.
+\begin{claim}\label{c:neighboring_sequence}
+Given the doubly stochastic matrices $A,B$, there exists a finite sequence of stochastic matrices, $A^0,\ldots,A^T$ such that
+\begin{enumerate}
+    \item $A^0= A$ and $A^T = B$.
+    
+    \item $A^t$ and $A^{t-1}$ are neighboring.
+    
+    \item the column-sum is bounded by $2$, $\sum_{e \in U} A_{ei}^t \leq 2$ for all $1\leq i \leq n$.
+    
+    \item $\sum_{t=1}^T \dfr(A^t, A^{t-1}) = \dfr(A,B)$.
+\end{enumerate}
+\end{claim}
+\begin{proof}[Proof Sketch of Claim~\ref{c:neighboring_sequence}]
+Let $f_{ij}^e$ denotes the optimal solution of the linear program of Definition~\ref{d:distance_lp} defining the FootRule distance $\dfr(A,B)$.  
+In case $A\neq B$, there exist elements $e_1 , e_2$ and indices $i<j$ such that $f_{i\ell(i)}^{e_1} > 0$ and $f_{j\ell(j)}^{e_2} > 0$ with $\ell(i) >= j$ and $\ell(j) <=i$.\\
+
+\noindent Let $\epsilon = \min(f_{i\ell(i)}^{e_1}, f_{j\ell(j)}^{e_2})$ and consider the sequence of the $|i-j|$ matrices produced by moving $\epsilon$ amount of mass in row $e_1$ from column $i$ to column $j$. Then consider the sequence of the $|i-j|$ matrices produced by moving $\epsilon$ amount of mass in the row $e_2$ from column $j$ to column $i$.\\
+
+\noindent In the overall sequence of $2|i-j|$ stochastic matrices, two consecutive matrices are \textit{neighboring}. Furthermore the column-sum of the matrices does not exceed $1 + \epsilon \leq 2$ and the final matrix $A'$ of the sequence is doubly stochastic. Moreover by the fact that $t(i) \geq j$ and $t(j) \leq i$ we get that the overall moving cost of the sequence equals $\dfr(A,A')$ and that 
+$\dfr(A,B) = \dfr(A,A') + \dfr(A',B)$. Applying the same argument inductively, until we reach matrix $B$, proves Claim~\ref{c:neighboring_sequence}.
+\end{proof}
+
+\begin{example}
+Let the doubly stochastic matrices $A = 
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$, $B = 
+\begin{pmatrix}
+0 & 0 & 1 \\
+1/2 & 1/2 & 0 \\
+1/2 & 1/2 & 0
+\end{pmatrix}$. $A$ can be converted to $B$ with the following sequence neighboring stochastic matrices, 
+\smallskip
+$\begin{pmatrix}
+0 & 1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$,
+$\begin{pmatrix}
+0 & 0 & 1 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$,
+$\begin{pmatrix}
+0 & 0 & 1 \\
+0 & 1 & 0 \\
+0 & 1 & 0
+\end{pmatrix}$,
+$\begin{pmatrix}
+0 & 0 & 1 \\
+1/2 & 1/2 & 0 \\
+0 & 1 & 0
+\end{pmatrix}$,
+$\begin{pmatrix}
+0 & 0 & 1 \\
+1/2 & 1/2 & 0 \\
+1/2 & 1/2 & 0
+\end{pmatrix}$.
+\smallskip
+Notice that the above sequence satisfies all the $4$ requirements of Claim~\ref{c:neighboring_sequence}.
+\end{example}
+
+
+\noindent The notion of neighboring matrices is rather helpful since Lemma~\ref{l:rand_moving_cost} admits a fairly simple proof in case $A,B$ are neighboring stochastic matrices (notice
+that the rounding scheme of
+Algorithm~\ref{alg:rand_rounding} is well-defined even for stochastic matrices). The latter is formally stated and proven in Lemma~\ref{l:neigh} and is the main technical claim of the section.
+
+\begin{lemma}\label{l:neigh}
+Let $\pi^A,\pi^B$ the permutations produced by the rounding scheme of
+Algorithm~\ref{alg:rand_rounding} (given as input) the stochastic matrices $A,B$ that 
+\textbf{i)} are neighboring \textbf{ii)} their column-sum is bounded by $2$, then
+$\mathbb E[\dkt(\pi^A,\pi^B)] \leq 4 \log^2 n \cdot \dfr(A,B)$
+\end{lemma}
+
+\begin{proof}[Proof of Lemma~\ref{l:neigh}]
+Since $A,B$ are neighboring there
+exists exactly two consecutive entries for which $A,B$ differ, denoted as $(e^\ast,i^\ast)$ and $(e^\ast,i^\ast+1)$. Let $\epsilon := A_{e^\ast i^\ast} - B_{e^\ast i^\ast }$, by the  Definition~\ref{d:distance_lp} of FootRule distance, we get that $\dfr(A,B) = |\epsilon|$. Without loss of generality we consider $\epsilon >0$ (the case $\epsilon <0$ symmetrically follows). We also denote with $O_i$ the set of elements $O_i := \{e \neq e^\star \text{ such that } I_e^A = i\}$ and with $I_e^A,I_e^B$ the indices in Step~$6$ of Algorithm~\ref{alg:rand_rounding}.\\
+
+\noindent Since $A,B$ are neighboring, the $e$-th row of $A$ and the $e$-th row of $B$ are identical for all $e \neq e^\star$. As a result, $I_e^A = I_e^B$ for all $e \neq e^\star$. Furthermore the neighboring property implies that
+even for $e^\ast$, $\sum_{s=1}^i A_{e^\star s} = \sum_{s=1}^i B_{e^\star s}$ for all $i \neq i^\star$ and thus $\Pr \left[ I_{e^\star}^A=i \wedge I_{e^\star}^B = j \right] = 0$ for $(i,j) \neq (i^\star,i^\star+1)$. Now notice that
+\begin{align*}
+\Pr\left[ I_{e^\star}^A=i^\star, I_{e^\star}^B = i^\star + 1 \right] &\leq 
+\Pr\left [ \log n \cdot \sum_{s=1}^{i^\star} B_{e^\star s}
+\leq \alpha_e \leq \log n \cdot \sum_{s=1}^{i^\star} A_{e^\star s} \right] \\
+&\leq 
+\log n \cdot \left( A_{e^\star i ^\star} -  B_{e^\star i ^\star}\right)  = \log n \cdot \epsilon
+\end{align*}
+
+\noindent Notice also that in case $I_{e^\star}^A  = I_{e^\star}^B$, $\mathrm{d}_{\mathrm{KT}}(\pi_A,\pi_B) = 0$. This is due to the fact that in such a case $I_e^A = I_e^B$ for all $e \in U$ and the fact that ties are broken lexicographically. As a result,
+\begin{align*}
+ \mathbb{E}\left[\mathrm{d}_{\mathrm{KT}}(\pi_A,\pi_B) \right] &= \Pr\left[ I_{e^\star}^A \neq I_{e^\star}^B\right] \cdot \mathbb{E}\left[\mathrm{d}_{\mathrm{KT}}(\pi_A,\pi_B)|~ I_{e^\star}^A \neq I_{e^\star}^B\right]\\
+&=\Pr[ I_{e^\star}^A=i^\star, I_{e^\star}^B = i^\star + 1 ] \cdot \mathbb{E}\left[\mathrm{d}_{\mathrm{KT}}(\pi_A,\pi_B)|~ I_{e^\star}^A=i^\star, I_{e^\star}^B =i^\star + 1\right]\\ 
+&\leq \epsilon \log n \cdot \left( \mathbb{E}\left[|O_{i^\star}|\right] + \mathbb{E}\left[|O_{i^\star + 1}|\right] \right)
+\end{align*}
+where the last inequality follows by the fact that once $I_{e^\ast}^A = i^\ast$ and $I_{e^\ast}^B = i^\ast + 1$, the element $e^\ast$ can move at most by $|O_{i^\ast}| + |O_{i^\ast+1}|$ positions and the fact that $I_{e^\ast}^A,I_{e^\ast}^B$ and $|O_{i^\ast}|,|O_{i^\ast+1}|$ are independent random variables.\\
+
+\noindent We complete the proof we providing a bound on $\mathbb{E}\left[|O_i|\right]$.  Notice that for $e \in U/ \{e^\ast\}$,
+$$ \Pr[ e \in O_{i}] \leq \Pr \left [ \log n \sum_{s=1}^{i-1} A_{es} \leq \alpha_e \leq \log n \sum_{s=1}^{i} A_{es}\right] \leq \log n \cdot A_{ei} $$
+which implies that $\mathbb{E}\left[|O_i|\right] \leq \log n \sum_{e \neq e^\star} A_{ei} \leq 2 \log n$. Finally we overall get,
+$$\mathbb{E}\left[\mathrm{d}_{\mathrm{KT}}(\pi_A,\pi_B) \right] \leq
+4\log^2 n \cdot \dfr(A,B)$$
+\end{proof}
+
+\noindent The proof of Lemma~\ref{l:rand_moving_cost} easily follows by Claim~\ref{c:neighboring_sequence} and Lemma~\ref{l:neigh}. 
+
+\begin{proof}[Proof of Lemma~\ref{l:rand_moving_cost}] Given the doubly stochastic matrices $A,B$, let the sequence  
+$A = A^0,A^1,\ldots,A^T = B$ of neighboring stochastic matrices ensured by  Claim~\ref{c:neighboring_sequence}. Now let $\pi^0,\pi^1,\ldots,\pi^T$ the sequence of permutations that the randomized rounding of Algorithm~\ref{alg:rand_rounding} produces given as input the sequence $A = A^0,A^1,\ldots,A^T = B$. Notice that,
+\[\mathbb{E}\left[\mathrm{d}_{\mathrm{KT}}(\pi^A,\pi^B)\right] \leq
+\sum_{t=1}^t \mathbb{E}\left[\mathrm{d}_{\mathrm{KT}}(\pi^t,\pi^{t-1})\right]
+\leq 4\log^2 n \cdot 
+\sum_{t=1}^T\dfr(A^t,A^{t-1})
+=  4\log^2 n \cdot \dfr(A,B)\]
+where the first inequality follows by the triangle inequality, the second by Lemma~\ref{l:neigh}
+and the last equality by Case $4$ of Claim~\ref{c:neighboring_sequence}.
+\end{proof}
+
+\noindent We conclude the section with the proof of Theorem~\ref{t:rand}.
+\begin{proof}[Proof of Theorem~\ref{t:rand}]
+By Lemma~\ref{l:rand_moving_cost} and Lemma~\ref{l:relax},
+$$ \sum_{t=1}^T \mathbb{E}\left[\dkt(\pi^t,\pi^{t-1})\right] \leq 
+4\log^2 n \cdot \sum_{t=1}^T \dfr(A^t,A^{t-1}) \leq 4\log^2 n \cdot \mathrm{OPT}_{\DSSC}
+$$
+
+\noindent Up next we bound the expected covering cost $\sum_{t=1}^T \mathbb{E}\left[\pi^t(R_t)\right]$. Notice that since $\sum_{e \in R_t} A_{e1}^t = 1$, the only elements that can have index $I_e^t = 1$ are the elements $e \in R_t$. As a result, in case there exists some $e$ at round $t$ with $I_e^t = 1$ then $\pi^t(R_t) = 1$.
+\begin{eqnarray*}
+\mathbb{E}\left[\pi^t(R_t)\right] &\leq& 1 + n \cdot \Pr \left[ I_e^t >1 \text{ for all } e\in R_t \right]\\
+&\leq& 1 + n \cdot \Pi_{e \in R_t} \left(1 - \log n \cdot A_{e1}^t\right)\\
+&\leq& 1 + n \cdot e^{- \log n \cdot \sum_{e \in R_t}A_{e1}^t}= 2 \cdot  \pi_{\mathrm{Opt}}^t(R_t)
+\end{eqnarray*}
+where the last inequality follows due to the fact that $\sum_{e \in R_t} A_{e1}^t = 1$ and $\pi_{\mathrm{Opt}}^t(R_t) \geq 1$.
+\end{proof}

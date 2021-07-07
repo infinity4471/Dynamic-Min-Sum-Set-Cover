@@ -1,0 +1,53 @@
+\section{Preliminaries and Basic Definitions}
+The set of elements $e$ is denoted by $U$ with $|U| = n$. A permutation of the elements is denoted by $\pi$ where $\pi_i$ denotes the element lying at position $i$ (for $1\leq i \leq n$) and $\mathrm{Pos}(e,\pi)$ denotes the position of the element $e \in U$ in permutation $\pi$.
+
+\begin{definition}[Kendall-Tau Distance]\label{d:KT}
+Given the permutations $\pi^A,\pi^B$, a pair of elements $(e,e')$ is inverted if and only if $\mathrm{Pos}(e,\pi^A) > \mathrm{Pos}(e',\pi^A)$ and $\mathrm{Pos}(e,\pi^B) < \mathrm{Pos}(e',\pi^B)$ or vice versa. The Kendall-Tau distance between the permutations $\pi^A,\pi^B$, denoted by $\dkt(\pi^A,\pi^B)$, is the number of inverted pairs.
+\end{definition}
+
+\begin{definition}[Spearman' Footrule Distance]\label{d:FR}
+The FootRule distance between the permutations $\pi^A,\pi^B$ is defined as $\mathrm{d}_{\mathrm{FR}}(\pi^A,\pi^B) = \sum_{e \in U}|\mathrm{Pos}(e,\pi^A) - \mathrm{Pos}(e,\pi^B)|$.
+\end{definition}
+\noindent The Kendall-Tau distance and FootRule distance are approximately equivalent, $\dkt(\pi^A,\pi^B) \leq \mathrm{d}_{\mathrm{FR}}(\pi^A,\pi^B) \leq 2 \cdot \dkt(\pi^A,\pi^B)$. Moreover both of them satisfy the triangle inequality.
+\begin{definition} An $n \times n$ matrix with positive entries (rows stand for the elements and columns for the positions) is called stochastic if $\sum_{i = 1}^n A_{ei} = 1$ for all $e\in U$ and doubly stochastic if (additionally) $\sum_{e \in U} A_{ei}=1$ for all $1\leq i \leq n$.
+\end{definition}
+\noindent A permutation of the elements $\pi$ can be equivalent represented by a $0$-$1$ doubly stochastic matrix $A$, where $A_{ei}=1$ if element $e$ lies at position $i$ and $0$ otherwise. When clear from context, we use the notion of permutation and ($0$-$1$) doubly stochastic matrix interchangeably.
+
+The notion of FootRule distance can be naturally extended to stochastic matrices. Given two doubly stochastic matrices $A,B$ consider the min-cost transportation problem, transforming row $A_e$ to the row $B_e$ where the cost of transporting a unit of mass between column $i$ and column $j$ equals $|i-j|$. Formally for each row $e$, define a complete bipartite graph where on the left part lie the entries $(e,i)$ for $1\leq i \leq n$ and on the right part the entries $(e,j)$ for $1\leq j \leq n$. The mass transported from entry $(e,i)$ to entry $(e,j)$ (denoted as $f_{ij}^e$)
+costs $f_{ij}^e\cdot |i-j|$ and the total mass \textit{leaving} $(e,i)$ equals $A_{ei}$ and the total  mass \textit{arriving} at $(e,j)$ equals $B_{ej}$.
+\begin{definition}\label{d:distance_lp}
+The FootRule distance between two stochastic matrices 
+$A,B$, denoted by $\mathrm{d}_{\mathrm{FR}}(A,B)$, is the optimal value of the following linear program,
+\begin{equation*}
+    \begin{array}{ll@{}ll}
+        \text min & \displaystyle \sum_{e \in U} \sum_{i = 1}^{n} \sum_{j=1}^n |i - j| \cdot f_{ij}^e &\\
+        \text{ s.t } & \displaystyle \sum_{i=1}^{n} f_{ij}^e = B_{ej}~~~~\text{for all }e \in U \text{ and }j=1,\ldots ,n&&\\
+        & \displaystyle \sum_{j=1}^{n} f_{ij}^e = A_{ei}~~~~\text{for all }e \in U \text{ and }i=1,\ldots, n&&\\
+        & \displaystyle f_{ij}^e \geq 0~~~~~~~~~~~\text{for all } e \in U \text{ and }i,j = 1,\ldots, n
+    \end{array}
+\end{equation*}
+\end{definition}
+\begin{example}
+Let the stochastic matrices $A = 
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1
+\end{pmatrix}$, $B = 
+\begin{pmatrix}
+1/3 & 1/3 & 1/3 \\
+1/2 & 1/2 & 0 \\
+1/4 & 0 & 3/4
+\end{pmatrix}$. The FootRule distance $\mathrm{d}_{\mathrm{FR}}(A,B) = \underbrace{(0\cdot 1/3 + 1\cdot 1/3 + 2\cdot 1/3)}_{\text{first row}}$ + $\underbrace{(1\cdot 1/2 + 0\cdot 1/2 + 1\cdot 0)}_{\text{second row}}$
++ $\underbrace{(2\cdot 1/4 + 1\cdot 0 + 0\cdot 3/4)}_{\text{third row}} = 2$.
+\end{example}
+\noindent Up next we present the formal definition of Multistage Min-Sum Set Cover.
+\begin{definition}[\textbf{Multistage Min-Sum Set Cover}]
+Given a universe of elements $U$, a sequence of
+requests $R_1,\ldots,R_T \subseteq U$ and an initial permutation of the elements $\pi^0$. 
+The goal is to select a sequence of permutation $\pi^1,\ldots,\pi^T$ that minimizes 
+$$\sum_{t=1}^{T} \pi^t(R_t) + \sum_{t=1}^{T} \dkt ( \pi^t, \pi^{t-1} )$$
+where $\pi^t(R_t)$ is the position of the first element of $R_t$ that we encounter in $\pi^t$, $\pi^t(R_t) = \min \{1\leq i \leq n:~ \pi_i^t \in R_t\}$.
+\end{definition}
+\noindent We refer to $\sum_{t=1}^T\pi^t(R_t)$ as \textbf{covering cost} and to $\sum_{t=1}^T \dkt(\pi^t,\pi^{t-1})$ as \textbf{moving cost}.
+We denote with $\pi_{\mathrm{Opt}}^t$ the permutation of the optimal solution of $\DSSC$ at round $t$, with $o_t$ the element that the optimal solution uses to cover the request $R_t$ (the element of $R_t$ appearing first in $\pi_{\mathrm{Opt}}^t$), and with $\mathrm{OPT}_{\DSSC}$ the cost of the optimal solution. Finally we call an instance of $\DSSC$ \textit{r-bounded} in case the cardinality of the requests is bounded by $r$, $|R_t| \leq r$.

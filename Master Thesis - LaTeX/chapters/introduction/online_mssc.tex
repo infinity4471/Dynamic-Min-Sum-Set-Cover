@@ -1,0 +1,83 @@
+\section{The Online Version of Min Sum Set Cover}
+
+\noindent
+Before we formally introduce $\DSSC$ we present the results for the Online Version of Multistage Min-Sum Set Cover \cite{FKKSV20}. In this version we are given the request sets $S_t$ one by one without knowing in advance what requests may come in the future. At each timestep $t$, the set $S_t$ is revealed and we need to select a permutation $\pi^t$ to serve this request. To move from permutation $\pi^{t-1}$ to $\pi^t$ our algorithm pays $d_{KT} (\pi^{t-1}, \pi^t)$ where $d_{KT}$ denotes the Kendall-Tau distance. Our goal is to minimize $\sum_{t=1}^T \pi^t(S_t) + d_{KT} (\pi^{t-1}, \pi^t)$. \\
+
+In \cite{FKKSV20} the authors investigate the Online Version of Min-Sum Set Cover. They notice that even though Online Min-Sum Set Cover is a generalization of List Update (List Update is a special case of Online Min-Sum Set Cover where all the request sets have cardinality 1, $|S_t| = 1$) the Move-to-Front which is the standard algorithm that achieves the optimal competitive ratio for List Update does not give any interesting results. In the future, as we proceed we consider that the request sets are $r$-uniform, that is $|S_t| = r \text{ for all } t \in [T]$.
+
+\subsection{A Memoryless Algorithm for Online Min-Sum Set Cover}
+
+The first result we present from the corresponding paper is a memoryless algorithm for Online Min-Sum Set Cover. An online algorithm is called memoryless iff the choices at timestep $t$ are not dependent on previous timesteps. We present the Move-All-Equally(MAE) Algorithm. Essentially what we do is that when we receive a request set $S_t$ we move every element of $S_t$ in the current permutation $\pi^{t-1}$ to the left until one of them reaches the head of the permutation. The algorithm is outlined below.
+
+\begin{algorithm}[ht]
+  \caption{Move-All-Equally}\label{alg:MAE}
+  \textbf{Input:} The given request at time t $S_t$ and the permutation $\pi^{t-1}$.\\
+  \textbf{Output:} A permutation at time $t$ $\pi^t$.
+
+ \begin{algorithmic}[1]
+    \STATE $k_t \leftarrow min\{ i | \pi^{t-1} [ i ] \in S_t \}$
+    \STATE decrease the index of all elements on $S_t$ by $k_t - 1$.
+
+  \end{algorithmic}
+\end{algorithm}
+
+This algorithm is quite interesting since it has 2 very interesting properties.
+
+\begin{itemize}
+    \item Let $e_t$ denote the element used by the optimal offline algorithm to cover the request $S_t$. Algorithm \ref{alg:MAE} moves this element towards the front of the list.
+    \item It balances movement and access costs. If the access cost of the request $S_t$ is $k_t$ the movement cost of the algorithm is roughly $r \cdot k_t$. The basic idea is that the moving cost of algorithm \ref{alg:MAE} can be compensated by the decrease in the position of element $e_t$. This is why it is crucial all the elements to be moved with the same speed.
+\end{itemize} 
+
+Even though Algorithm \ref{alg:MAE} possesses these two interesting properties the authors show that it doesn't quite bridge the lower bound with a matching competitive ratio.
+
+\begin{lemma}
+    The Competitive Ratio of Algorithm \ref{alg:MAE} is $\Omega( r^2 )$.
+\end{lemma}
+
+\begin{proof}
+    To construct an adversarial input sequence for our lower bound we request every time the last $r$ elements of the current permutation. Since Algorithm $\ref{alg:MAE}$ moves all the elements at the same speed we construct $n/r$ requests that are mutually disjoint. Therefore, we can serve each request optimally with a cost of $\Theta(n/r)$ whereas our MAE algorithm serves each request with a cost of $\Omega(n \cdot r)$. Therefore by comparing we obtain the lower bound on the competitive ratio.
+\end{proof}
+
+Even though the analysis of this algorithm doesn't allow for a matching upper bound the authors provide us with the following result. For more details on the analysis of the algorithm the interested reader may refer to \cite{FKKSV20}.
+
+\begin{lemma}
+    The Competitive Ratio of Algorithm \ref{alg:MAE} is at most $O( 2^{\sqrt( logn \cdot logr ) } ).$
+\end{lemma}
+
+\subsection{The Lazy Rounding Algorithm}
+
+In this section we present a lower bound for every deterministic algorithm for Online Min-Sum Set Cover and further on we present the Lazy Rounding algorithm which is a deterministic algorithm that matches the lower bound (up to constant factors).
+
+\begin{theorem}
+    Any deterministic algorithm for the Online Min-Sum Set Cover problem has a competitive ratio at least $(r+1)(1 - \frac{1}{n+1})$.
+\end{theorem}
+
+For proving this Theorem the authors use an averaging argument, similar to that of List-Update \cite{ST85}. In each step the adversary requests once again the last $r$ elements of the current permutation and therefore the access cost is at least (n-r+1). By using simple counting techniques they show that for any fixed set $S_t$ of size $r$ and any $i \in [n-r+1]$, the number of permutations $\pi$ with access cost $\pi(S_t)=i$ is $\binom{n-i}{r-1} \cdot r! \cdot (n-r)!$. By summing over all permutations and dividing by $n!$ to get the average cost we get that the optimal permutation has cost at least $\frac{n+1}{r+1}$ and the competitive ratio of any algorithm is at lteat $(r+1)(1 - \frac{1}{n+1})$. For more details the interested reader may refer to the original paper. \\
+
+Before stating the Lazy Rounding Algorithm and the main results we mention some of the algorithms that may sound natural but behave trivially bad. What's interesting is that this behaviour translates directly even in the offline version of the problem so it's interesting to know what absolutely doesn't work and motivate a non-combinatorial approach for the $\DSSC$.
+
+\begin{itemize}
+    \item \textbf{$MTF_{first}$}: Move to the front of the permutation the element of $S_t$ that appears first in $\pi^t$.
+    \item \textbf{$MTF_{last}$}: Move to the front of the permutation the element of $S_t$ that appears last in $\pi^t$.
+    \item \textbf{$MTF_{random}$}: Move a random element of $S_t$ to the front of the list.
+\end{itemize}
+
+All these algorithms have a tight $O(n)$ competitive ratio. Below we highlight the main parts of the Lazy Rounding algorithm which has an $O(r)$ competitive ratio. \\
+
+\begin{enumerate}
+    \item Use a black-box Multiplicative Weights Update Algorithm (MWU) with learning rate $1/n^3$. Using the results from learning theory the authors show that: $AccessCost(MWU) \leq \frac{5}{4} AccessCost(OPT)$.
+    
+    \item Using an online rounding scheme which turns any randomized algorithm A to a deterministic one, denoted $Derand(A)$, with access cost at most $2r \cdot \mathbb{R}[AccessCost(A)]$, without any guarantee so far for the Moving Cost of $Derand(A)$.
+    
+    \item Lazy-Rounding is essentially a lazy version of $Derand(MWU)$ (applying the online rounding scheme to the Multiplicative Weights Update Algorithm) that updates the permutation only if the distribution of MWU has changed a lot. Let's call a time interval where Lazy-Rounding does not change it's permutation a phase. The authors show that during a phase:
+        \begin{itemize}
+            \item $AccessCost(Lazy-Rounding) \leq 4r \cdot \mathbb{E}[AccessCost(MWU)]$.
+            \item $MovingCost(Lazy-Rounding) \leq \mathbb{E}[AccessCost(MWU)]$.
+        \end{itemize}
+\end{enumerate}
+
+By combining the above properties we obtain: $$Cost(Lazy-Rounding) \leq (4r+1) \mathbb{E}[AccessCost(MWU)] \leq (5r+2) Cost(OPT)$$.
+
+\begin{theorem}
+    The deterministic online algorithm Lazy-Rounding is (5r+2) competitive for the Online Version of Min-Sum Set Cover.
+\end{theorem}

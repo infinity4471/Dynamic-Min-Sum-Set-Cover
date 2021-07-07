@@ -1,0 +1,22 @@
+\chapter{Introduction}
+
+In this Diploma Thesis we investigate the polynomial time approximability of Multistage Min-Sum Set Cover. Multistage Min-Sum Set Cover (or Dynamic Min-Sum Set Cover) is a natural and interesting generalization of List Update and it falls in the general category of dynamic problems that evolve over time. In this particular problem we are given a universe $U$ and a collection of sets $S_1, S_2, ..., S_T$ and our goal is to produce a set of permutations $\pi^1, \pi^2, \ldots, \pi^T$ so that we minimize a specific cost function. We will define the problem rigorously further on as well as relative problems that fall into the same category. \\
+
+Even though several variations of the problem have been extensively studied such as the Static \cite{FLT02} or the Generalized version \cite{AGY09,BGK10} of Min-Sum Set Cover it is the first time that the Multistage offline version is considered. Our work is heavily motivated by the recent work at \cite{FKKSV20} where the authors study the competitive ratio of the Online Min-Sum Set Cover problem. Even though several results are proven to be tight there are still gaps to be closed. By studying the offline-Multistage version of the problems our goals are to match the lower bounds of the problem with appropriate algorithms and motivate the further study of the online version using some of the techniques used in this work. \\
+
+We begin with an investigation of the classical well-studied problems that appear in the literature and are generalized by $\SSC$. We aim to present the state of the art algorithms used and the techniques used for analysing them. In many cases, our algorithms for the Multistage version are heavily influenced by algorithms that appeared previously for other (often unrelated) versions of the problems. \\
+
+%
+The $\SSC$ problem generalizes various $\mathrm{NP}$-hard problems, such as Min-Sum Vertex Cover and Min-Sum Coloring and it is well-studied. Feige, Lovasz and Tetali~\cite{FLT04} proved that the greedy algorithm, which picks in each position the element that covers the most uncovered requests, is a $4$-approximation (that was also implicit in~\cite{BBHST98}) and that no $(4-\varepsilon)$-approximation is possible, unless $\mathrm{P} = \mathrm{NP}$. In Generalized $\SSC$ (a.k.a. \emph{Multiple Intents Re-ranking}), there is a covering requirement $K(R_t)$ for each request $R_t$ and the cost of covering a request $R_t$ is the position of the $K(R_t)$-th element of $R_t$ in the (static) permutation $\pi$. The $\SSC$ problem is the special case where $K(R_t)=1$ for all requests $R_t$. Another notable special case of Generalized $\SSC$ is the Min-Latency Set Cover problem \cite{HL05}, which corresponds to the other extreme case where $K(R_t) = |R_t|$ for all requests $R_t$. Generalized $\SSC$ was first studied by Azar et al.~\cite{AGY09}, who presented a $O(\log r)$-approximation; later $O(1)$-approximation algorithms were obtained~\cite{BGK10,SW11,ISZ14,BBFT20}. \\
+
+Further generalizations of Generalized $\SSC$ have been considered, such as the Submodular Ranking problem, studied in \cite{AG11}, which generalizes both Set Cover and $\SSC$, and the Min-Latency Submodular Cover, studied by Im et al.~\cite{INZ16}. We refer to~\cite{INZ16,Im16} for a detailed discussion on the connections between these problems and their applications. \\ 
+
+The online version of $\SSC$, which generalizes the famous List Update problem, was studied in \cite{FKKSV20}. They proved that its static deterministic competitive ratio is $\Theta(r)$ and presented a natural  memoryless algorithm, called \emph{Move-all-Equally}, with static competitive ratio in $\Omega(r^2)$ and $2^{O(\sqrt{\log n  \cdot \log r})}$ and dynamic competitive ratio in $\Omega(r \sqrt{n})$ and $O(r^{3/2} \sqrt{n})$-competitive. Subsequently, \cite{FLPS20} considered $\SSC$ from the viewpoint of online learning. Through dimensionality reduction from permutations to doubly stochastic matrices, they obtained randomized (resp. deterministic) polynomial-time online learning algorithms with $O(1)$-regret for Generalized $\SSC$ (resp. $O(r)$-regret for $\SSC$).
+
+\input{chapters/introduction/static_version}
+
+\input{chapters/introduction/generalized_version}
+
+\input{chapters/introduction/online_mssc}
+
+\input{chapters/introduction/multistage}

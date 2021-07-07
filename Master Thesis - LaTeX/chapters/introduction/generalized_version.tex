@@ -1,0 +1,23 @@
+\section{The Generalized Min-Sum Set Cover}
+
+After presenting the static version of Min Sum Set Cover we proceed with the generalization of the problem which was first introduced by Azar, Gamzu and Yin in \cite{AGY09}. In this problem we are once again given a universe $U$ with $|U| = n$, a collection of subsets of $U$, $S_1, S_2, ..., S_m \subseteq U$ and also an integer number for each set in the collection $K(S_i)$. Our purpose is to compute a permutation of $U$ in order to minimize the covering cost of each set: $\sum_{i=1}^{m} C( S_i )$ where $C(S_i)$ is the position of the $K(S_i)$-th element of $S_i$ that appears on the permutation. \\
+
+In \cite{AGY09} the authors present an $O(logr)$-approximation algorithm where $r = max_{i} \{ |S_i| \}$. Subsequently, a constant factor approximation algorithm was given \cite{BGK10} based on Linear Programming. \\
+
+In this section we present the main results of \cite{SW11} where the authors use a method called $\alpha$-point scheduling which helps them round the Linear Programming Relaxation of the problem and they obtain an algorithm that has a significantly better approximation ratio than \cite{BGK10}. The following results and techniques are rather important since several ideas we used for extracting our own results for $\DSSC$ are based on \cite{SW11}. \\
+
+The first step is solving the following Linear Programming Relaxation of the problem. We define the variables $y_{i,t}$ which we want to be 1 if and only if $C(S_i) < t$ (that is, the $K(S_i)$-th element of the set $S_i$ appears before index t) and additionally the variables $x_{e,t}$ which we want to equal 1 if and only if the element e $e \in U$ appears at position $t$. Of course these hold for the integer program and since we solve a relaxation these variables will probably not be exactly equal to 1. Based on the constraints above we have the following linear program.
+
+\begin{equation*}
+    \begin{array}{ll@{}ll}
+        \text min & \displaystyle \sum_{t = 1}^n \sum_{i = 1}^{m} ( 1 - y_{i,t} ) &\\
+        \text{ s.t } & \displaystyle \sum_{e \in U} x_{e,t} = 1~~~~\text{για κάθε }t \leq n &&\\
+        & \displaystyle \sum_{t=1}^{n} x_{e,t} = 1~~~~\text{για κάθε }e \in U &&\\
+        & \displaystyle \sum_{e \in S \setminus A} \sum_{t'<t} x_{e,t} \geq (K(S_i) - |A|) \cdot y_{i,t}~~~~\text{ για κάθε } i \leq m, A \subseteq S_i, t \leq n &&\\
+        & \displaystyle x_{e,t}, y_{i,t} \in [ 0, 1 ] ~~~~\text{ για κάθε } e \in U, i \leq m, t \leq n
+    \end{array}
+\end{equation*}
+
+The Linear Program at first glance seems to have exponentially many constraints, since we create a constraint for every subset of every set $S_i$. It was shown in \cite{BGK10} that this problem can be dealt with and the exponentially many constraints can be separated in polynomial time so that we can solve the LP efficiently. \\
+
+The basic algorithm for solving the problem with 28 appriximation ratio is based on $\alpha$ point scheduling. Specifically, for every $e \in U$ we select independently and uniformly $\alpha_e \in [0,1]$. Let $t_{e,\alpha_e}$ be the first time $t'$ s.t $\sum_{t=1}^{t'} x_{e,t} \geq \alpha_e$. We form the final permutation by ordering the elements $e \in U$ in decreasing order of $t_{e,\alpha_e}$ by breaking ties arbitrarily (but consistently). For more details on the analysis of the algorithm the interested reader may refer to \cite{BGK10}.

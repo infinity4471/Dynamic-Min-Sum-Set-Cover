@@ -1,0 +1,156 @@
+\section{Approximation Algorithms for Dynamic Min-Sum Set Cover}\label{s:main}
+\noindent There exists an
+approximation-preserving reduction from $\mathrm{Set-Cover}$ to  
+$\DSSC$ that provides us with the following inapproximability results.
+\begin{theorem}\label{t:hardness}
+\begin{itemize}
+    \item There is no $c \cdot \log n$-approximation algorithm for $\DSSC$ (for a sufficienly small constant $c$) unless $\mathrm{P = NP}$.
+    
+    \item For $r$-bounded sequences, there is no $o(r)$-approximation algorithm for $\DSSC$, unless there is a
+    $o(r)$-approximation algorithm for $\mathrm{Set-Cover}$ with each element being covered by at most $r$ sets.
+\end{itemize}
+\end{theorem}
+
+\noindent The proof of Theorem~\ref{t:hardness} is fairly simple, given an instance of $\mathrm{Set-Cover}$ we construct an instance of $\DSSC$ in which the initial permutation $\pi^0$ contains in the first positions some dummy elements (they do not appear in any of the requests) and in the last positions the sets of the $\mathrm{Set-Cover}$ (we consider an element of $\DSSC$ for each set of $\mathrm{Set-Cover}$). Finally each request for $\DSSC$ is associated with an element of the $\mathrm{Set-Cover}$ and contains the \textit{elements in $\DSSC$/ sets in $\mathrm{Set-Cover}$} containing it.
+
+\begin{proof}
+Let the equivalent definition of $\mathrm{Set-Cover}$ in which we are given a universe of element $E = \{1,\ldots,n\}$ and sets $S_1,S_2,\ldots,S_m \subseteq E$ and we are asked to select the minimum number of elements covering all the sets (an element $e$ covers set $S_i$ if $e \in S_i$).
+
+Consider the instance of $\DSSC$ with the elements $U= \{1,\ldots,n\} \cup \{d_1,\ldots,d_{n^2m}\}$. The elements $\{d_1,\ldots,d_{n^2m}\}$
+are dummy in the sense that
+they appear in none of the requests $R_t$. Let the initial permutation $\pi_0$ contain in the first $n^2m$ positions the dummy elements and in the last $n$ positions the elements $\{1,\ldots,n\}$, $\pi_0 = [d_1,\ldots,d_{n^2m},1,\ldots,n]$ and the request sequence of 
+$\DSSC$ be $S_1,S_2,\ldots,S_m$.\\
+
+Let a $c$-approximation algorithm for $\DSSC$ producing the permutation $\pi_1,\ldots,\pi_m$ the cost of which is denoted by $\mathrm{Alg}$. Let also $\mathrm{CoverAlg}$ denote the set composed by the element that the $c$-approximation algorithm uses to cover the requests, $\mathrm{CoverAlg} = \{\text{the element of }S_t\text{ appearing first in }\pi_t\}$. Then,
+$$\mathrm{Alg} \geq n^2 m \cdot |\mathrm{CoverAlg}|$$
+
+
+Now consider the following solution 
+for $\DSSC$ constructed by the optimal solution for $\mathrm{Set-Cover}$. This solution initially moves the elements of the optimal covering set
+$\mathrm{OPT}_\mathrm{SetCover}$ to the first positions and then never changes the permutation. Clearly the cost of this solution is upper bounded by
+$$\mathrm{Set-Cover}_{\DSSC} \leq \underbrace{|\mathrm{OPT}_\mathrm{SetCover}| \cdot (n^2m + n)}_{\text{moving cost}} + \underbrace{m\cdot |\mathrm{OPT}_\mathrm{SetCover}|}_{\text{covering cost}}  $$
+\noindent In case $\mathrm{Alg} \leq c \cdot \mathrm{Set-Cover}_{\DSSC}$, we directly get that $|\mathrm{CoverAlg}| \leq 3c \cdot |\mathrm{OPT}_\mathrm{SetCover}|$.\\
+
+\noindent There is no polynomial-time approximation algorithm for $\mathrm{Set}-\mathrm{Cover}$ with approximation ratio better than $\log m$. The latter holds even for instance of $\mathrm{Set}-\mathrm{Cover}$ for which $m = \mathrm{poly}(n)$ \cite{alon2006} where $\mathrm{poly}(\cdot)$ is a polynomial with degree bounded by a universal constant. Since the number of elements $|U|$, in the constructed instance of $\DSSC$ is $n^2m$, any $c\cdot \log |U|$-approximation for $\DSSC$ (for $c$ sufficiently small) implies an approximation algorithm for $\mathrm{Set}-\mathrm{Cover}$
+with approximation ratio less than $\log n$. In case
+there exists an $c=o(r)$-approximation algorithm for $\DSSC$ for requests sequences $R_1,\ldots,R_T$ where $|R_t|\leq r$, we obtain an $o(r)$-approximation for algorithm for $\mathrm{Set-Cover}$ for sets with cardinality bounded by $r$. In the standard form of $\mathrm{Set}-\mathrm{Cover}$ this is translated into the fact that each element belongs in at most $r$ sets.
+\end{proof}
+
+Both the $O(\log^2 n)$-approximation algorithm (for requests of general cardinality) and the $O(r^2 )$-approximation algorithm for $r$-bounded requests, that we subsequently present,
+are based on rounding a linear program called \textit{Fractional Move To Front}. The latter is the linear program relaxation of \textit{Move To Front}, a problem closely related to Multistage Min-Sum Set Cover.$~\mathrm{MTF}$ asks for a sequence of permutations $\pi^1,\ldots,\pi^T$ such as at each round $t$, an element of $R_t$ lies on the first position of $\pi^t$ and $\sum_{t=1}^T \mathrm{d}_{\mathrm{FR}}(\pi^t,\pi^{t-1})$ is minimized.
+
+\begin{definition}\label{d:frac_MTF}
+Given a sequence of requests $R_1,\ldots,R_T \subseteq U$ and an initial permutation of the elements $\pi^0$, consider the following linear program, called $\mathrm{Fractional- MTF}$,
+\begin{equation*}
+    \begin{array}{ll@{}ll}
+        \text min & \displaystyle \sum_{t=1}^{T} \mathrm{d}_{\mathrm{FR}}(A^t,A^{t-1})&\\
+        \text{ s.t } & \displaystyle \sum_{i=1}^{n} A_{ei}^t = 1 ~~~~\text{for all }e \in U\text{ and } t = 1,\ldots, T &&\\
+        & \displaystyle \sum_{e \in U} A_{ei}^t = 1 ~~~~\text{for all }i = 1,\ldots,n\text{ and } t = 1,\ldots, T&\\
+        & \displaystyle \sum_{e \in R_t} A_{e1}^t = 1 ~~~\text{for all } t = 1,\ldots, T&\\
+        & \displaystyle A^0 = \pi^0 &&\\
+        & \displaystyle A_{ei}^t \geq 0 ~~~~~~~~\text{for all } e \in U, ~i = 1,\ldots, n\text{ and } t = 1,\ldots, T&\\
+    \end{array}
+\end{equation*}
+where $\mathrm{d}_{\mathrm{FR}}(\cdot,\cdot)$ is the FootRule distance of Definition~\ref{d:distance_lp}.
+\end{definition}
+\noindent  There is an elegant argument (appeared in previous works, e.g., \cite{FKKSV20})
+showing that the optimal solution of $\mathrm{MTF}$ is at most $4 \cdot \mathrm{OPT}_{\DSSC}$. In Lemma~\ref{l:relax} we provide the argument and establish that $\mathrm{Fractional- MoveToFront}$ is a $4$-approximate relaxation of $\DSSC$.
+\begin{lemma}\label{l:relax}
+$\sum_{t=1}^T \mathrm{d}_{\mathrm{FR}}(A^t,A^{t-1}) \leq 4 \cdot \mathrm{OPT}_{\DSSC}$
+where $A^1,\ldots,A^t$ is the optimal solution of $\mathrm{Fractional- MTF}$.
+\end{lemma}
+
+\begin{proof}[Proof of Lemma~\ref{l:relax}]
+Let $o_t$ the element of $R_t$ appearing first in the permutation $\pi_{\mathrm{Opt}}^t$. Consider the sequence of permutation $\pi^0,\pi^1,\ldots,\pi^T$ constructed by moving at each round $t$, the element $o_t$ to the first position of the permutation. Notice that $\pi^0,\pi^1,\ldots,\pi^T$ is a feasible solution for both $\mathrm{MoveToFront}$ and $\mathrm{Fractional}-\mathrm{MTF}$. The first key step towards the proof of Lemma~\ref{l:relax} is that
+\[\dkt(\pi^t,\pi^{t-1}) + \dkt(\pi^t,\pi^t_{\mathrm{Opt}}) - 
+\dkt(\pi^{t-1},\pi^{t}_{\mathrm{Opt}}) \leq 2\cdot \pi^t_{\mathrm{Opt}}(R_t)
+\]
+To understand the above inequality, let $k_t$ be the position of $o_t$ in permutation $\pi^{t-1}$. Out of the $k_t - 1$ elements on the right of $o_t$ in permutation $\pi^{t-1}$, let $Left_t$ ($Right_t$) denote the elements that are on the left (right) of $o_t$ in permutation $\pi^{t-1}_{\mathrm{Opt}}$. It is not hard to see that $\pi^t_{\mathrm{Opt}}(R_t) \geq |Left_t|$, $\dkt(\pi^t,\pi^{t-1}) = |Left_t| + |Right_t|$ and  
+$\dkt(\pi^t,\pi^t_{\mathrm{Opt}}) - 
+\dkt(\pi^{t-1},\pi^{t}_{\mathrm{Opt}}) = |Left_t| - |Right_t|$. Using the fact that $\dkt(\pi^{t},\pi^{t}_{\mathrm{Opt}}) - \dkt(\pi^{t-1},\pi^{t}_{\mathrm{Opt}}) \leq \dkt(\pi^{t}_{\mathrm{Opt}},\pi^{t-1}_{\mathrm{Opt}})$ and the previous inequality we get,
+\[\dkt(\pi^t,\pi^{t-1}) + \dkt(\pi^t,\pi^t_{\mathrm{Opt}})-
+\dkt(\pi^{t-1},\pi^{t-1}_{\mathrm{Opt}})
+\leq 
+ 2 \cdot \pi^t_{\mathrm{Opt}}(R_t) + \dkt(\pi^{t}_{\mathrm{Opt}},\pi^{t-1}_{\mathrm{Opt}})
+\]
+\noindent and by a telescopic sum we get $\sum_{t=1}^T \dkt(\pi^t,\pi^{t-1}) \leq 2\cdot \mathrm{OPT}_{\DSSC}$. The proof follows by the fact that $\dfr(\pi^t,\pi^{t-1}) \leq 2\cdot  \dkt(\pi^t,\pi^{t-1})$.
+\end{proof}
+
+As already mentioned, our main technical contribution is the design of \textit{rounding schemes} converting the optimal solution, $A^1,\ldots,A^T$, of $\mathrm{Fractional- MTF}$ into a sequence of permutations $\pi^1,\ldots,\pi^T$. This is done so as to bound the moving cost of our algorithms by the moving cost $\sum_{t=1}^T \dfr(A^t,A^{t-1})$. We then separately bound the covering cost, $\sum_{t=1}^T \pi^t(R_t)$ by showing that always an element of $R_t$ lies on the first positions of $\pi^t$.
+
+The main technical challenge in the design of our rounding schemes is ensure to that the moving cost of our solutions $\sum_{t=1}^T\dkt(\pi^t,\pi^{t-1})$ is approximately bounded by the moving cost $\sum_{t=1}^T\dfr(A^t,A^{t-1})$. Despite the fact that the connection between 
+doubly stochastic matrices and permutations is quite well-studied
+and there are various rounding schemes converting doubly stochastic matrices to probability distributions on permutations (such as the Birkhoff–von Neumann decomposition or the schemes of \cite{BGK10,SW11,BBFT20,FKKSV20}), using such schemes in a \textit{black-box} manner does not provide any kind of positive results for $\DSSC$. For example consider the case where $A^1 = \dots = A^T$ and thus $\sum_{t=1}^T \dfr(A^t,A^{t-1}) = \dfr(A^1,A^0)$. In case a randomized rounding scheme is applied \textit{independently to each $A^t$}, there always exists a positive probability that $\pi^t \neq \pi^{t-1}$ and thus the moving cost will far exceed $\dfr(A^1,A^0)$ as $T$ grows. The latter reveals the need for \textit{coupled rounding schemes} that convert the overall sequence of matrices $A^1,\ldots,A^T$ to a sequence of permutations $\pi^1,\ldots,\pi^T$. Such a rounding scheme is presented in Algorithm~\ref{alg:rand_rounding} and constitutes the back-bone of our approximation algorithm for requests of general cardinality.
+
+\begin{algorithm}[ht]
+  \caption{A Randomized Algorithm for $\DSSC$}\label{alg:rand_rounding}
+  \textbf{Input:} A sequence of requests $R_1,\ldots,R_T$ and an initial permutation of the elmenents $\pi^0$.\\
+  \textbf{Output:} A sequence of permutations $\pi^1,\ldots,\pi^T$.
+
+ \begin{algorithmic}[1]
+ \STATE Find the optimal solution $A^0=\pi^0,A^1,\ldots,A^T$ for $\mathrm{Fractional-MTF}$. 
+
+     \FOR {each element $e \in U$}
+        \STATE Select $\alpha_e$ uniformly at random in $[0,1]$.
+        \ENDFOR
+
+ \FOR {$t=1 \ldots T$ }
+              
+     \FOR {all elements $e \in U$}
+                \STATE $I_e^t := \mathrm{argmin}_{1\leq i \leq n} \{ \log n \cdot \sum_{s=1}^i 
+                A_{es}^t \geq \alpha_e\}$.
+        \ENDFOR
+            
+            \STATE $\pi^t:=$ sort elements according to $I_e^t$ with ties being broken lexicographically.
+\ENDFOR
+  \end{algorithmic}
+\end{algorithm}
+The rounding scheme described in Algorithm~\ref{alg:rand_rounding}, imposes correlation between the different time-steps by simply requiring that each element $e$ selects $\alpha_e$ once and for all and by breaking ties lexicographically (any consistent tie-breaking rule would also work). In Lemma~\ref{l:rand_moving_cost} of Section~\ref{s:rand}, we show that no matter the sequence of doubly stochastic matrices, the rounding scheme of Algorithm~\ref{alg:rand_rounding} produces a sequence of permutations with overall moving cost at most $4\log^2 n$ the moving cost of the matrix-sequence\footnote{By omitting 
+the $\log n$-multiplication step of Step~$7$, one could establish that the moving cost of the produced permutations is at most $4$ times the moving cost of the matrix-sequence, however omitting the $\log n$ multiplication could lead in prohibitively high covering cost.} and thus establishes that the overall moving cost of Algorithm~\ref{alg:rand_rounding} is bounded by $4\log^2 n \cdot \mathrm{OPT}_{\DSSC}$. The $\log n$ multiplication in Step~$7$ serves as a \textit{probability amplifier} ensuring that at least one element of $R_t$ lies in the relatively first positions of $\pi^t$ and permits us to approximately bound the covering cost $\sum_{t=1}^T \mathbb{E}\left[\pi^t(R_t) \right]$ by the covering cost of the optimal solution for $\DSSC$,
+$\sum_{t=1}^T \pi_\mathrm{Opt}^t(R_t)$.
+\begin{theorem}\label{t:rand}
+Algorithm~\ref{alg:rand_rounding} is a $O(\log^2 n)$-approximation algorithm for $\DSSC$.
+\end{theorem}
+
+\noindent Despite the fact that in Step~$7$ of Algorithm~\ref{alg:rand_rounding}, we multiply the entries of $A^t$ with $\log n$ the overall guarantee is $O(\log^2 n)$. At a first glance the latter seems quite strange but admits a rather natural explanation. For most of the positions $i$, the probability that an element $e$ admits index $I_e^t = i$ is roughly $\log n \cdot A_{ei}^t$, but due to the fact each index $j \leq i$ is on expectation  selected by $\log n$ other elements, the expected position of $e$ in the produced permutation is roughly $ \log^2 n$ times the expected value of
+$\mathrm{argmin}_{1\leq i \leq n} \{ \sum_{s=1}^i A_{es}^t \geq \alpha_e\}$. This phenomenon relates with the elegant fitting argument given in \cite{FLT04} to prove that the greedy algorithm is $4$-approximation for the original \textit{Min-Sum Set Cover} (which is tight unless $\mathrm{P}= \mathrm{NP}$). %In order to prove that the greedy algorithm is $4$-approximation (which is also tight assuming unless $\mathrm{P}= \mathrm{NP}$). Feige et. al shrink by a factor $1/2$ both the covering indices of the requests and the amount of mass that an element needs to be covered. 
+The latter makes us conjecture that the tight inapproximability bound for $\DSSC$ is $\Omega(\log^2 n)$ for requests of general cardinality. 
+
+Motivated by the $r$-approximation LP-based algorithm for instances of 
+$\mathrm{Set-Cover}$ in which elements belong in at most $r$ sets, we examine whether the $O(\log^2 n)$ for $\DSSC$
+can be ameliorated in case of $r$-bounded request sequences. Interestingly, the simple \textit{greedy rounding} scheme (described\footnote{Step~$3$ of Algorithm~\ref{alg:greedy_rounding} is well-defined since $|R_t| \leq r$ and $\sum_{e \in R_t}A_{e1}^t = 1$.} in Algorithm~\ref{alg:greedy_rounding}) provides such a $O(r^2)$-approximation algorithm.
+\begin{algorithm}[H]
+  \caption{A Greedy-Rounding Algorithm for $\DSSC$ for $r$-Bounded Sequences.}\label{alg:greedy_rounding}
+  \textbf{Input:} A request sequence $R_1,\ldots,R_T$ with $|R_t| \leq r$ and an initial permutation $\pi^0$.\\
+  \textbf{Output:} A sequence of permutations $\pi^1,\ldots,\pi^T$.
+
+ \begin{algorithmic}[1]
+ \STATE Find the optimal solution $A^0=\pi^0,A^1,\ldots,A^T$ for $\mathrm{Fractional-MTF}$. 
+
+ 
+ \FOR {$t=1 \ldots T$ }
+              
+        \STATE $\pi^t:=$ in $\pi^{t-1}$, move to the first position an element $e \in R_t$
+        such that $A_{e1}^t \geq 1/r$
+\ENDFOR
+  \end{algorithmic}
+\end{algorithm}
+
+\noindent The $O(r^2)$-approximation guarantee of Algorithm~\ref{alg:greedy_moving} is formally stated and proven in Theorem~\ref{t:greedy}. The main technical challenge is that we cannot directly compare the moving cost of Algorithm~\ref{alg:greedy_rounding} with $\sum_{t=1}^T \dfr(A^t,A^{t-1})$ and thus we deploy a two-step detour.
+
+In the first step (Lemma~\ref{l:upper_bound_r}), we prove the existence of a 
+sequence of doubly stochastic matrices $\hat{A}^0 =\pi^0,\hat{A}^1,\ldots,\hat{A}^T$ for which each $\hat{A}^t$ satisfies that $\textbf{(i)}$ its entries of  are \textbf{multiples of $1/r$}, $\textbf{(ii)}$ $\hat{A}^t_{e_t 1} \geq 1/r$ where $e_t$ is the element that Algorithm~\ref{alg:greedy_rounding} moves to the first position at round $t$, and $\textbf{(iii)}$ the sequence
+$\hat{A}^0 =\pi^0,\hat{A}^1,\ldots,\hat{A}^T$ admits moving cost at most 
+$\sum_{t=1}^T \mathrm{d}_{\mathrm{FR}}(A^t,A^{t-1})$. In order to establish the existence of such a sequence, we construct an appropriate linear program (see Definition~\ref{def:lp_2}) based on the elements 
+that Algorithm~\ref{alg:greedy_rounding} moves to the first position at each round and prove that it admits an optimal solution with values being multiples of $1/r$. To do the latter, we
+relate the linear program of Definition~\ref{def:lp_2} with a fractional version of the $k$-$\mathrm{Paging}$ \cite{BBN12} problem and based on the optimal eviction policy
+(\textit{evict the page appearing the furthest in the future}), we design an algorithm producing optimal solutions for the LP with values being multiple of $1/r$.
+
+In the second step (Lemma~\ref{l:r_integral}), we show that for any sequence $\hat{A}^0 =\pi^0,\hat{A}^1,\ldots,\hat{A}^T$ satisfying properties~\textbf{(i)} and~\textbf{(ii)}, the moving cost of Algorithm~\ref{alg:greedy_rounding} is at most $O(r^2) \cdot \sum_{t=1}^T \dfr(\hat{A}^t,\hat{A}^{t-1})$. The latter is achieved through the use of an appropriate \textit{potential function} based on a generalization of Kendall-Tau distance to  
+doubly stochastic matrices with entries being multiples
+of $1/r$ (see Definition~\ref{d:frac_KT}).
+\begin{theorem}\label{t:greedy}
+Algorithm~\ref{alg:greedy_rounding}
+is a $O(r^2)$-approximation algorithm for $\DSSC$.
+\end{theorem}
+\noindent In Section~\ref{s:rand}~and~\ref{s:greedy} we provide the basic steps and ideas in the proof of Theorem~\ref{t:rand}~and~\ref{t:greedy} respectively.

@@ -1,0 +1,22 @@
+\chapter{Previous Work and Related Problems}
+
+\noindent
+In this chapter we study a general class of problems that are closely related to our problem of interest, that is $\DSSC$. As we've already examined in the introduction, $\DSSC$ is a problem which evolves over time and our aim is to hold a sequence of states (in our case permutations) such that we optimize an objective function. It is fairly common to consider the time evolving case of a well known problem. Usually we need a notion of a moving cost so that the decisions we make affect the trajectory of the objective function in the future. One such problem is considered in section \ref{sec:facility_loc} where we present part of the work at \cite{FOTAKIS202113}. \\
+
+Facility Location is a classical problem that has been widely studied in both combinatorial optimization and operations research, due to its many practical applications. It provides a simple and natural model for industrial planning, network design, machine learning, data clustering and computer vision 
+\cite{DH2002,L2011,CGM16,BSU13}. In its most basic form, the input to a Facility Location  setting is a metric space and the location of $n$ \emph{agents}.  The designer then selects another point in the space to serve as the \emph{facility}, with the objective being to minimize the sum of distances to the agents. The $K$-Facility Location  problem, which is also widely known as the $K$-median problem, is a straightforward generalization where $K$ facilities are used instead. The problem then becomes more reminiscent of \emph{clustering}, with the added subtlety of also having to match facilities with agents. \\
+
+Many times in optimization problems that are time-evolving, it is natural to assume that we have no information regarding how the data will evolve over time. If we consider real world applications this is almost always the case. This kind of setting is called online and we aim to design online algorithms that perform not a lot worse than the corresponding optimal offline algorithm (that is, we compare the performance of our algorithm to the algorithm that knows everything in advance). This idea is captured in the notion of competitiveness defined below. \\
+
+\begin{definition}\label{comp-ratio}
+Let $c > 1$ be a real number and let $ALG(\sigma)$ be the cost of an online deterministic algorithm on a request sequence $\sigma$. The algorithm is called $c$-competitive
+if there exists a constant $b$ such that
+$$ALG(\sigma) \leq c \cdot OPT(\sigma)+b $$ 
+holds for any request sequence $\sigma$, where $OPT(\sigma)$ is the optimal offline algorithm which knows $\sigma$ in advance. 
+\end{definition}
+
+To demonstrate basic techniques from the field of online optimization we introduce the List Update Problem. $\DSSC$ generalizes List Update for requests of cardinality greater than 1 but several techniques that we use in analysing our algorithms further on such as the Potential Function or the Move-To-Front algorithm are nicely outlined in the List Update Problem. For a more thorough review of the problem as well as other online problems the interested reader may refer to \cite{Albers98, ASW95, tim16, ST85}.
+
+\input{chapters/previous_work/list_update}
+
+\input{chapters/previous_work/facility_allocation}
